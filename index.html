@@ -22,7 +22,7 @@ main{padding:28px;max-width:1500px;width:100%;margin:auto}.top{display:flex;just
 <div class="grid two"><div class="card"><div class="head"><h3>Today's focus</h3><button class="link" onclick="navigate('focus')">See all</button></div><div id="dashboardList" class="list"></div></div><div class="card"><div class="head"><h3>Quick actions</h3></div><div class="quick"><button onclick="openModal('task')">＋ Add focus<small>Capture an important action</small></button><button onclick="openModal('goal')">◎ Add goal<small>Define a meaningful outcome</small></button><button onclick="openModal('habit')">↻ Add habit<small>Build consistency</small></button><button onclick="navigate('decisions')">◇ Decision room<small>Structure a choice</small></button></div></div></div></section>
 
 <section class="view" id="view-focus"><div class="card"><div class="head"><h3>Daily Focus</h3><button class="btn" onclick="openModal('task')">+ Add focus</button></div><div id="focusList" class="list"></div></div></section>
-<section class="view" id="view-goals"><div class="card"><div class="head"><h3>Goals & Missions</h3><button class="btn" onclick="openModal('goal')">+ Add goal</button></div><div id="goalList" class="list"></div></div></section>
+<section class="view" id="view-goals"><div class="card"><div class="head"><h3>Goals & Missions</h3><button class="btn" onclick="openModal('goal')">+ Add goal</button></div><div id="goalList" class="list"></div></div><div class="card" style="margin-top:16px"><div class="head"><h3>Missions</h3><button class="btn" onclick="openModal('mission')">+ Add mission</button></div><p class="sub">Break important goals into concrete actions.</p><div id="missionList" class="list" style="margin-top:16px"></div></div></section>
 <section class="view" id="view-habits"><div class="card"><div class="head"><h3>Habits</h3><button class="btn" onclick="openModal('habit')">+ Add habit</button></div><div id="habitList" class="list"></div></div></section>
 <section class="view" id="view-growth"><div class="grid two"><div class="card"><div class="head"><h3>Growth overview</h3></div><p class="sub">Your growth system will turn consistent actions into measurable progress.</p><div style="margin-top:20px">Foundation · 25%</div></div><div class="card"><div class="head"><h3>Achievements</h3></div><div class="empty">Achievements will unlock as you complete goals, focus items, and habits.</div></div></div></section>
 <section class="view" id="view-decisions"><div class="card"><div class="head"><h3>Decision Room</h3><button class="btn" onclick="openModal('decision')">+ New decision</button></div><p class="sub">Structure options, trade-offs, evidence, and your next step.</p><div id="decisionList" class="list" style="margin-top:16px"></div></div></section>
@@ -44,4 +44,75 @@ function del(type,i){if(confirm("Delete this item?")){state[type].splice(i,1);sa
 function renderTasks(items){if(!items.length)return '<div class="empty">Nothing here yet. Add your first focus item.</div>';return items.map(function(t,i){return '<div class="item"><button class="check '+(t.done?"done":"")+'" onclick="toggleTask('+i+')" aria-label="Toggle"></button><div class="itemmain"><div class="itemtitle">'+esc(t.title)+'</div><div class="meta">'+esc(t.priority)+' priority · '+(t.done?"Completed":"Open")+'</div></div><button class="link" onclick="del(\'tasks\','+i+')">Delete</button></div>'}).join("")}
 function render(){var done=state.tasks.filter(function(x){return x.done}).length;document.getElementById("date").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"});var h=new Date().getHours();document.getElementById("greeting").textContent=h<12?"Good morning.":h<18?"Good afternoon.":"Good evening.";document.getElementById("tasks").textContent=state.tasks.length;document.getElementById("done").textContent=done;document.getElementById("goals").textContent=state.goals.length;document.getElementById("streak").textContent=state.habits.reduce(function(m,x){return Math.max(m,x.streak||0)},0);document.getElementById("dashboardList").innerHTML=renderTasks(state.tasks.slice(0,4));document.getElementById("focusList").innerHTML=renderTasks(state.tasks);document.getElementById("goalList").innerHTML=state.goals.length?state.goals.map(function(g,i){return '<div class="item"><div class="itemmain"><div class="itemtitle">'+esc(g.title)+'</div><div class="meta">'+esc(g.why||"Goal")+' · '+g.progress+'%</div></div><button class="link" onclick="del(\'goals\','+i+')">Delete</button></div>'}).join(""):'<div class="empty">No goals yet. Define an outcome you care about.</div>';document.getElementById("habitList").innerHTML=state.habits.length?state.habits.map(function(x,i){return '<div class="item"><div class="itemmain"><div class="itemtitle">'+esc(x.title)+'</div><div class="meta">'+esc(x.frequency)+' · '+x.streak+' day streak</div></div><button class="btn soft" onclick="state.habits['+i+'].streak++;save()">Complete</button><button class="link" onclick="del(\'habits\','+i+')">Delete</button></div>'}).join(""):'<div class="empty">No habits yet. Start with one small action.</div>';document.getElementById("decisionList").innerHTML=state.decisions.length?state.decisions.map(function(x,i){return '<div class="item"><div class="itemmain"><div class="itemtitle">'+esc(x.title)+'</div><div class="meta">'+esc(x.context||"Decision")+' · '+esc(x.status)+'</div></div><button class="link" onclick="del(\'decisions\','+i+')">Delete</button></div>'}).join(""):'<div class="empty">No decisions yet.</div>'}
 render();if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
+</script><script>
+(function(){
+  state.missions=Array.isArray(state.missions)?state.missions:[];
+  var originalLoadState=state;
+  function persist(){localStorage.setItem(KEY,JSON.stringify(state));render();}
+  window.save=persist;
+  window.completeHabit=function(i){
+    var h=state.habits[i],today=new Date().toISOString().slice(0,10);
+    if(h.lastCompleted===today)return;
+    var yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    h.streak=h.lastCompleted===yesterday?(h.streak||0)+1:1;
+    h.lastCompleted=today;persist();
+  };
+  window.setGoalProgress=function(i,delta){
+    var g=state.goals[i];g.progress=Math.max(0,Math.min(100,(g.progress||0)+delta));persist();
+  };
+  window.toggleMission=function(i){
+    var m=state.missions[i];m.done=!m.done;
+    if(m.goalId){var g=state.goals.find(function(x){return x.id===m.goalId});if(g){var linked=state.missions.filter(function(x){return x.goalId===m.goalId});var completed=linked.filter(function(x){return x.done}).length;g.progress=linked.length?Math.round(completed/linked.length*100):g.progress;}}
+    persist();
+  };
+  window.del=function(type,i){if(confirm("Delete this item?")){state[type].splice(i,1);persist();}};
+  window.openBackup=function(mode){
+    if(mode==="export"){
+      var blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");
+      a.href=URL.createObjectURL(blob);a.download="lifeos-backup-"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href);
+    }else{var input=document.createElement("input");input.type="file";input.accept=".json,application/json";input.onchange=function(){var f=input.files&&input.files[0];if(!f)return;var reader=new FileReader();reader.onload=function(){try{var data=JSON.parse(reader.result);if(!data||typeof data!=="object")throw new Error();state={tasks:Array.isArray(data.tasks)?data.tasks:[],goals:Array.isArray(data.goals)?data.goals:[],habits:Array.isArray(data.habits)?data.habits:[],decisions:Array.isArray(data.decisions)?data.decisions:[],missions:Array.isArray(data.missions)?data.missions:[]};persist();alert("LIFEOS backup restored.");}catch(e){alert("That backup file could not be restored.");}};reader.readAsText(f);};input.click();}
+  };
+  window.openModal=function(type){
+    var map={task:"Add focus item",goal:"Add goal",habit:"Add habit",decision:"New decision",mission:"Add mission"};
+    document.getElementById("modalTitle").textContent=map[type]||"Add";
+    var extra="";
+    if(type==="task")extra='<div class="field"><label>Priority</label><select name="priority"><option>High</option><option selected>Medium</option><option>Low</option></select></div>';
+    if(type==="goal")extra='<div class="field"><label>Why does this matter?</label><textarea name="why" rows="3"></textarea></div>';
+    if(type==="habit")extra='<div class="field"><label>Frequency</label><select name="frequency"><option>Daily</option><option>Weekdays</option><option>Weekly</option></select></div>';
+    if(type==="decision")extra='<div class="field"><label>Context</label><textarea name="context" rows="3"></textarea></div>';
+    if(type==="mission"){var opts=state.goals.map(function(g){return '<option value="'+esc(g.id)+'">'+esc(g.title)+'</option>'}).join("");extra='<div class="field"><label>Goal</label><select name="goalId">'+(opts||'<option value="">No goals yet</option>')+'</select></div>';}
+    document.getElementById("form").innerHTML='<div class="field"><label>Title</label><input name="title" required maxlength="100" autofocus></div>'+extra+'<button class="btn" type="submit">Save</button>';
+    document.getElementById("form").onsubmit=function(e){
+      e.preventDefault();var f=new FormData(e.target),o={id:uid(),title:f.get("title")};
+      if(type==="task"){o.priority=f.get("priority");o.done=false;o.date=new Date().toISOString().slice(0,10);state.tasks.push(o);}
+      else if(type==="goal"){o.why=f.get("why");o.progress=0;state.goals.push(o);}
+      else if(type==="habit"){o.frequency=f.get("frequency");o.streak=0;o.lastCompleted=null;state.habits.push(o);}
+      else if(type==="decision"){o.context=f.get("context");o.status="Open";state.decisions.push(o);}
+      else {o.goalId=f.get("goalId");o.done=false;state.missions.push(o);}
+      closeModal();persist();
+    };
+    document.getElementById("modal").classList.add("open");
+  };
+  window.renderTasks=function(items){
+    if(!items.length)return '<div class="empty">Nothing here yet. Add your first focus item.</div>';
+    return items.map(function(t,i){return '<div class="item"><button class="check '+(t.done?"done":"")+'" onclick="toggleTask('+i+')" aria-label="Toggle"></button><div class="itemmain"><div class="itemtitle">'+esc(t.title)+'</div><div class="meta">'+esc(t.priority||"Medium")+' priority · '+(t.done?"Completed":"Open")+'</div></div><button class="link" onclick="del(\'tasks\','+i+')">Delete</button></div>';}).join("");
+  };
+  window.toggleTask=function(i){state.tasks[i].done=!state.tasks[i].done;persist();};
+  window.render=function(){
+    var today=new Date().toISOString().slice(0,10);
+    var todayTasks=state.tasks.filter(function(x){return !x.date||x.date===today});
+    var done=todayTasks.filter(function(x){return x.done}).length;
+    document.getElementById("date").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"});
+    var h=new Date().getHours();document.getElementById("greeting").textContent=h<12?"Good morning.":h<18?"Good afternoon.":"Good evening.";
+    document.getElementById("tasks").textContent=todayTasks.length;document.getElementById("done").textContent=done;document.getElementById("goals").textContent=state.goals.length;document.getElementById("streak").textContent=state.habits.reduce(function(m,x){return Math.max(m,x.streak||0)},0);
+    document.getElementById("dashboardList").innerHTML=renderTasks(todayTasks.slice(0,4));document.getElementById("focusList").innerHTML=renderTasks(todayTasks);
+    document.getElementById("goalList").innerHTML=state.goals.length?state.goals.map(function(g,i){return '<div class="item"><div class="itemmain"><div class="itemtitle">'+esc(g.title)+'</div><div class="meta">'+esc(g.why||"Goal")+' · '+(g.progress||0)+'%</div><div style="height:7px;background:#eef2f6;border-radius:9px;margin-top:8px;overflow:hidden"><span style="display:block;height:100%;width:'+(g.progress||0)+'%;background:linear-gradient(90deg,#635bff,#22c1dc)"></span></div></div><button class="btn soft" onclick="setGoalProgress('+i+',10)">+10%</button><button class="link" onclick="del(\'goals\','+i+')">Delete</button></div>';}).join(""):'<div class="empty">No goals yet. Define an outcome you care about.</div>';
+    document.getElementById("missionList").innerHTML=state.missions.length?state.missions.map(function(m,i){var g=state.goals.find(function(x){return x.id===m.goalId});return '<div class="item"><button class="check '+(m.done?"done":"")+'" onclick="toggleMission('+i+')" aria-label="Toggle mission"></button><div class="itemmain"><div class="itemtitle">'+esc(m.title)+'</div><div class="meta">'+esc(g?g.title:"Unlinked goal")+' · '+(m.done?"Completed":"Open")+'</div></div><button class="link" onclick="del(\'missions\','+i+')">Delete</button></div>';}).join(""):'<div class="empty">No missions yet. Add a mission after creating a goal.</div>';
+    document.getElementById("habitList").innerHTML=state.habits.length?state.habits.map(function(x,i){var done=x.lastCompleted===today;return '<div class="item"><div class="itemmain"><div class="itemtitle">'+esc(x.title)+'</div><div class="meta">'+esc(x.frequency)+' · '+(x.streak||0)+' day streak</div></div><button class="btn soft" '+(done?"disabled":"")+' onclick="completeHabit('+i+')">'+(done?"Completed today":"Complete today")+'</button><button class="link" onclick="del(\'habits\','+i+')">Delete</button></div>';}).join(""):'<div class="empty">No habits yet. Start with one small action.</div>';
+    document.getElementById("decisionList").innerHTML=state.decisions.length?state.decisions.map(function(x,i){return '<div class="item"><div class="itemmain"><div class="itemtitle">'+esc(x.title)+'</div><div class="meta">'+esc(x.context||"Decision")+' · '+esc(x.status)+'</div></div><button class="link" onclick="del(\'decisions\','+i+')">Delete</button></div>';}).join(""):'<div class="empty">No decisions yet.</div>';
+  };
+  var quick=document.querySelector(".quick");
+  if(quick&&!document.getElementById("backupExport"))quick.insertAdjacentHTML("beforeend",'<button id="backupExport" onclick="openBackup(\'export\')">⇩ Backup<small>Export your LIFEOS data</small></button><button onclick="openBackup(\'import\')">⇧ Restore<small>Import a previous backup</small></button>');
+  render();
+})();
 </script></body></html>
