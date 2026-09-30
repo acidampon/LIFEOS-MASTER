@@ -1,0 +1,25 @@
+name: Package LIFEOS Source ZIP
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create source ZIP
+        run: |
+          mkdir -p release
+          zip -r release/LIFEOS-MASTER-v1.5.0-source.zip .             -x ".git/*"                ".github/workflows/*"                "release/*"
+      - name: Upload source ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: LIFEOS-MASTER-v1.5.0-source
+          path: release/LIFEOS-MASTER-v1.5.0-source.zip
+          if-no-files-found: error
