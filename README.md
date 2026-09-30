@@ -2,7 +2,7 @@
 
 **LIFEOS** is a personal life operating system for managing daily focus, goals, missions, habits, growth, decisions, and personal progress in one place.
 
-## Current foundation — v1.3.1
+## Current foundation — v1.4.0
 
 - Command Center dashboard with daily metrics
 - Daily Focus with completion state and priority
@@ -19,6 +19,7 @@
 - PWA manifest and offline service-worker foundation
 - Automated GitHub Actions QA
 - GitHub Pages deployment workflow
+- Planner calendar with dated events, times, notes, monthly navigation, and daily agenda
 
 ## Product architecture
 
@@ -50,8 +51,13 @@ LIFEOS is being built incrementally as a modular personal operating system. The 
 
 ## Version
 
-1.3.0
+1.4.0
 
+
+## v1.4.0 planner release
+- Adds a mobile-friendly monthly Planner calendar.
+- Supports dated events, optional times, notes, daily agenda view, month navigation, and event deletion.
+- Includes planner data in backup/restore.
 
 ## v1.3.1 maintenance
 - Uses the device's local calendar date for daily focus and habit completion.
