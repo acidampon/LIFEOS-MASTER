@@ -51,7 +51,7 @@ LIFEOS is being built incrementally as a modular personal operating system. The 
 
 ## Version
 
-1.4.0
+1.5.0
 
 
 ## v1.4.0 planner release
