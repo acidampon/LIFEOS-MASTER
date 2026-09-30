@@ -319,4 +319,135 @@ var oldRender=render;render=function(){oldRender();renderLife()};render();
   if(quick&&!document.getElementById("plannerMore"))quick.insertAdjacentHTML("afterbegin",'<button id="plannerMore" onclick="navigate(\'planner\')">▦ Planner<small>Plan dates, appointments and deadlines</small></button>');
   renderPlanner();
 })();
+</script><script>
+(function(){
+  state.calendarEvents=Array.isArray(state.calendarEvents)?state.calendarEvents:[];
+  var LocalNotifications=(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.LocalNotifications)||null;
+
+  function notificationId(eventId){
+    var h=0, str=String(eventId||"lifeos");
+    for(var i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i)|0;
+    return Math.abs(h%2147483000)+1;
+  }
+  function reminderMinutes(e){ return Number(e.reminderMinutes||0); }
+  function reminderAt(e){
+    if(!e.time||!reminderMinutes(e)) return null;
+    var at=new Date(e.date+"T"+e.time+":00");
+    if(isNaN(at.getTime())) return null;
+    at.setMinutes(at.getMinutes()-reminderMinutes(e));
+    return at;
+  }
+  async function requestPermission(){
+    try{
+      if(LocalNotifications){
+        var p=await LocalNotifications.requestPermissions();
+        return p&&p.display==="granted";
+      }
+      if("Notification" in window){
+        if(Notification.permission==="granted") return true;
+        if(Notification.permission==="default") return (await Notification.requestPermission())==="granted";
+      }
+    }catch(e){}
+    return false;
+  }
+  async function scheduleEvent(e){
+    var at=reminderAt(e);
+    if(!at||at.getTime()<=Date.now()) return;
+    try{
+      if(LocalNotifications){
+        await LocalNotifications.cancel({notifications:[{id:notificationId(e.id)}]});
+        await LocalNotifications.schedule({notifications:[{
+          id:notificationId(e.id),
+          title:"LIFEOS reminder",
+          body:e.title+(e.notes?" — "+e.notes:""),
+          schedule:{at:at},
+          extra:{eventId:e.id}
+        }]});
+      }
+    }catch(err){ console.warn("LIFEOS notification scheduling failed",err); }
+  }
+  async function cancelEvent(e){
+    try{
+      if(LocalNotifications) await LocalNotifications.cancel({notifications:[{id:notificationId(e.id)}]});
+    }catch(err){}
+  }
+  async function scheduleAll(){
+    for(var i=0;i<state.calendarEvents.length;i++) await scheduleEvent(state.calendarEvents[i]);
+  }
+
+  window.enableLifeosReminders=async function(){
+    var ok=await requestPermission();
+    if(ok){
+      await scheduleAll();
+      alert("LIFEOS reminders are enabled.");
+    }else{
+      alert("Notifications are not enabled. Allow notifications for LIFEOS in your device settings and try again.");
+    }
+  };
+
+  var oldPlannerModal=window.openPlannerModal;
+  window.openPlannerModal=function(){
+    var form=document.getElementById("form");
+    document.getElementById("modalTitle").textContent="Add planner event";
+    form.innerHTML='<div class="field"><label>Title</label><input name="title" required maxlength="120"></div>'+
+      '<div class="field"><label>Date</label><input name="date" type="date" value="'+(window.__lifeosPlannerSelected||localDateKey())+'" required></div>'+
+      '<div class="field"><label>Time</label><input name="time" type="time" required></div>'+
+      '<div class="field"><label>Reminder</label><select name="reminderMinutes"><option value="0">No reminder</option><option value="5">5 minutes before</option><option value="15" selected>15 minutes before</option><option value="30">30 minutes before</option><option value="60">1 hour before</option></select></div>'+
+      '<div class="field"><label>Notes</label><textarea name="notes" rows="3" maxlength="500" placeholder="Optional details"></textarea></div>'+
+      '<button class="btn" type="submit">Save event</button>';
+    form.onsubmit=async function(e){
+      e.preventDefault();
+      var f=new FormData(form);
+      var event={id:uid(),title:f.get("title"),date:f.get("date"),time:f.get("time"),reminderMinutes:Number(f.get("reminderMinutes")||0),notes:f.get("notes")};
+      state.calendarEvents.push(event);
+      window.__lifeosPlannerSelected=event.date;
+      closeModal(); save();
+      if(event.reminderMinutes){
+        var ok=await requestPermission();
+        if(ok) await scheduleEvent(event);
+      }
+    };
+    document.getElementById("modal").classList.add("open");
+  };
+
+  var oldDelete=window.deletePlannerEvent;
+  window.deletePlannerEvent=async function(i){
+    var e=state.calendarEvents[i];
+    if(!e) return;
+    if(confirm("Delete this planner event?")){
+      await cancelEvent(e);
+      state.calendarEvents.splice(i,1);
+      save();
+    }
+  };
+
+  var oldPlannerSelect=window.plannerSelect;
+  window.plannerSelect=function(date){
+    window.__lifeosPlannerSelected=date;
+    oldPlannerSelect(date);
+  };
+
+  var more=document.querySelector("#view-more .quick");
+  if(more&&!document.getElementById("enableReminders")){
+    more.insertAdjacentHTML("beforeend",'<button id="enableReminders" onclick="enableLifeosReminders()">🔔 Enable reminders<small>Allow LIFEOS to notify you before events</small></button>');
+  }
+
+  var oldRenderPlanner=window.renderPlanner;
+  window.renderPlanner=function(){
+    oldRenderPlanner();
+    var list=document.getElementById("plannerList");
+    if(!list)return;
+    list.querySelectorAll(".item").forEach(function(item){
+      var text=item.querySelector(".meta");
+      if(text&&text.textContent.indexOf("reminder")===-1){
+        var title=item.querySelector(".itemtitle");
+        var event=state.calendarEvents.find(function(x){return x.title===title.textContent;});
+        if(event&&event.reminderMinutes) text.textContent+=" · "+event.reminderMinutes+" min reminder";
+      }
+    });
+  };
+
+  window.addEventListener("load",function(){setTimeout(scheduleAll,700);});
+  scheduleAll();
+})();
 </script></body></html>
