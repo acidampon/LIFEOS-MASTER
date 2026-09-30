@@ -28,7 +28,7 @@ main{padding:28px;max-width:1500px;width:100%;margin:auto}.top{display:flex;just
 <section class="view" id="view-decisions"><div class="card"><div class="head"><h3>Decision Room</h3><button class="btn" onclick="openModal('decision')">+ New decision</button></div><p class="sub">Structure options, trade-offs, evidence, and your next step.</p><div id="decisionList" class="list" style="margin-top:16px"></div></div></section>
 <section class="view" id="view-life"><div class="card"><div class="head"><h3>Life System</h3><button class="btn" onclick="openLifeModal('area')">+ Add area</button></div><p class="sub">Organize the important areas of your life and keep each one moving.</p><div id="areaList" class="list" style="margin-top:16px"></div></div></section>
 <section class="view" id="view-profile"><div class="grid two"><div class="card"><div class="head"><h3>Personal Profile</h3><button class="btn" onclick="openLifeModal('profile')">Edit</button></div><div id="profileView" class="sub"></div></div><div class="card"><div class="head"><h3>Life snapshot</h3></div><div id="snapshot" class="list"></div></div></div></section></main></div>
-<nav class="mobile"><button class="active" data-view="dashboard">⌂<br>Home</button><button data-view="focus">✓<br>Focus</button><button data-view="goals">◎<br>Goals</button><button data-view="habits">↻<br>Habits</button><button data-view="growth">↗<br>Growth</button></nav>
+<nav class="mobile"><button class="active" data-view="dashboard">⌂<br>Home</button><button data-view="focus">✓<br>Focus</button><button data-view="goals">◎<br>Goals</button><button data-view="habits">↻<br>Habits</button><button data-view="more">☰<br>More</button></nav>
 <div class="modal" id="modal"><div class="modalcard"><div class="head"><h3 id="modalTitle">Add</h3><button class="link" onclick="closeModal()">Close</button></div><form id="form"></form></div></div>
 <script>
 var KEY="lifeos.v1";var state=load();var titles={dashboard:["Command Center","See what matters today and move it forward."],focus:["Daily Focus","Turn today's priorities into clear actions."],goals:["Goals & Missions","Define outcomes that matter."],habits:["Habits","Build consistency through small repeatable actions."],growth:["Growth","Turn actions into visible progress."],decisions:["Decision Room","Structure important choices before you act."]};
@@ -161,5 +161,41 @@ var oldRender=render;render=function(){oldRender();renderLife()};render();
   var previousRender=window.render;
   window.render=function(){previousRender();growthRender();renderLife();};
   syncAchievements();window.render();
+})();
+</script>
+<script>
+(function(){
+  state.onboarding=state.onboarding||{complete:false};
+  var originalOpenModal=window.openModal;
+  window.openDecision=function(i){
+    var d=state.decisions[i]||{title:"",context:"",options:"",pros:"",cons:"",choice:"",nextAction:"",status:"Open"};
+    document.getElementById("modalTitle").textContent=i===undefined?"New decision":"Edit decision";
+    document.getElementById("form").innerHTML='<div class="field"><label>Decision</label><input name="title" required maxlength="120" value="'+esc(d.title)+'"></div><div class="field"><label>Context</label><textarea name="context" rows="3">'+esc(d.context||"")+'</textarea></div><div class="field"><label>Options</label><textarea name="options" rows="3" placeholder="One option per line">'+esc(d.options||"")+'</textarea></div><div class="field"><label>Pros</label><textarea name="pros" rows="3">'+esc(d.pros||"")+'</textarea></div><div class="field"><label>Cons / trade-offs</label><textarea name="cons" rows="3">'+esc(d.cons||"")+'</textarea></div><div class="field"><label>Chosen option</label><input name="choice" value="'+esc(d.choice||"")+'"></div><div class="field"><label>Next action</label><input name="nextAction" value="'+esc(d.nextAction||"")+'"></div><div class="field"><label>Status</label><select name="status"><option '+(d.status==="Open"?"selected":"")+'>Open</option><option '+(d.status==="In progress"?"selected":"")+'>In progress</option><option '+(d.status==="Resolved"?"selected":"")+'>Resolved</option></select></div><button class="btn" type="submit">Save decision</button>';
+    document.getElementById("form").onsubmit=function(e){e.preventDefault();var f=new FormData(e.target),o={id:d.id||uid(),title:f.get("title"),context:f.get("context"),options:f.get("options"),pros:f.get("pros"),cons:f.get("cons"),choice:f.get("choice"),nextAction:f.get("nextAction"),status:f.get("status")};if(i===undefined)state.decisions.push(o);else state.decisions[i]=o;closeModal();save();};
+    document.getElementById("modal").classList.add("open");
+  };
+  window.renderDecisionRoom=function(){
+    var el=document.getElementById("decisionList");if(!el)return;
+    el.innerHTML=state.decisions.length?state.decisions.map(function(d,i){
+      return '<div class="item"><div class="itemmain"><div class="itemtitle">'+esc(d.title)+'</div><div class="meta">'+esc(d.status||"Open")+' · '+esc(d.choice||"No choice recorded")+'</div>'+(d.nextAction?'<div class="meta">Next: '+esc(d.nextAction)+'</div>':"")+'</div><button class="btn soft" onclick="openDecision('+i+')">Open</button><button class="link" onclick="del(\'decisions\','+i+')">Delete</button></div>';
+    }).join(""):'<div class="empty">No decisions yet. Structure an important choice before you act.</div>';
+  };
+  var oldRender=window.render;
+  window.render=function(){oldRender();renderDecisionRoom();};
+  window.navigate=function(v){
+    if(v==="more"){alert("Use the sidebar on larger screens. On mobile, open Profile or Decision Room from the Command Center quick actions.");return;}
+    var t={dashboard:["Command Center","See what matters today and move it forward."],focus:["Daily Focus","Turn today's priorities into clear actions."],goals:["Goals & Missions","Define outcomes that matter."],habits:["Habits","Build consistency through small repeatable actions."],growth:["Growth","Turn actions into visible progress."],decisions:["Decision Room","Structure important choices before you act."],life:["Life System","Organize the important areas of your life."],profile:["Profile","Keep your personal direction and life snapshot close."]};
+    document.querySelectorAll(".view").forEach(function(x){x.classList.remove("active")});var target=document.getElementById("view-"+v);if(target)target.classList.add("active");
+    document.querySelectorAll("[data-view]").forEach(function(x){x.classList.toggle("active",x.dataset.view===v)});
+    document.getElementById("title").textContent=t[v]?t[v][0]:"LIFEOS";document.getElementById("subtitle").textContent=t[v]?t[v][1]:"";window.scrollTo(0,0);
+  };
+  var quick=document.querySelector(".quick");
+  if(quick&&!document.getElementById("mobileMoreInfo"))quick.insertAdjacentHTML("beforeend",'<button id="mobileMoreInfo" onclick="navigate(\'profile\')">◉ Profile<small>Personal direction and snapshot</small></button><button onclick="navigate(\'life\')">▣ Life system<small>Manage important life areas</small></button>');
+  var originalOpenBackup=window.openBackup;
+  window.openBackup=function(mode){
+    if(mode!=="import")return originalOpenBackup(mode);
+    var input=document.createElement("input");input.type="file";input.accept=".json,application/json";input.onchange=function(){var f=input.files&&input.files[0];if(!f)return;var reader=new FileReader();reader.onload=function(){try{var data=JSON.parse(reader.result);if(!data||typeof data!=="object")throw new Error();state={tasks:Array.isArray(data.tasks)?data.tasks:[],goals:Array.isArray(data.goals)?data.goals:[],habits:Array.isArray(data.habits)?data.habits:[],decisions:Array.isArray(data.decisions)?data.decisions:[],missions:Array.isArray(data.missions)?data.missions:[],areas:Array.isArray(data.areas)?data.areas:[],profile:data.profile&&typeof data.profile==="object"?data.profile:{name:"",role:"",vision:""},achievements:Array.isArray(data.achievements)?data.achievements:[],onboarding:data.onboarding||{complete:false}};localStorage.setItem(KEY,JSON.stringify(state));render();alert("LIFEOS backup restored.");}catch(e){alert("That backup file could not be restored.");}};reader.readAsText(f);};input.click();
+  };
+  window.render();renderDecisionRoom();
 })();
 </script></body></html>
