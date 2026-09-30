@@ -10,10 +10,10 @@ aside{position:sticky;top:0;height:100vh;background:#111827;color:#fff;padding:2
 main{padding:28px;max-width:1500px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;margin-bottom:24px}.eyebrow{color:var(--accent);font-weight:800;font-size:12px}.title{font-size:32px;margin:4px 0}.sub{color:var(--muted);margin:0}.grid{display:grid;gap:16px}.hero{background:linear-gradient(135deg,#171c2b,#303b67);color:#fff;border-radius:24px;padding:24px;display:flex;justify-content:space-between;gap:20px;align-items:center}.hero h2{margin:5px 0}.hero p{color:#d7def0;max-width:650px}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:10px 14px;font-weight:700;background:var(--accent);color:#fff}.btn.light{background:#fff;color:#111827}.btn.soft{background:#eef2ff;color:#4338ca}.stats{grid-template-columns:repeat(4,1fr);margin-top:16px}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:0 10px 30px #1018280f}.label{font-size:13px;color:var(--muted)}.value{font-size:28px;font-weight:800}.two{grid-template-columns:1.35fr .85fr;margin-top:16px}.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.head h3{margin:0}.link{border:0;background:transparent;color:var(--accent);font-weight:700}.list{display:grid;gap:9px}.item{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid var(--line);border-radius:13px}.check{width:20px;height:20px;border:2px solid #cbd5e1;border-radius:6px;background:#fff}.check.done{background:var(--success);border-color:var(--success)}.itemmain{flex:1;min-width:0}.itemtitle{font-weight:700}.meta{font-size:12px;color:var(--muted)}.empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed #cbd5e1;border-radius:13px}.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick button{border:1px solid var(--line);background:#fff;border-radius:13px;padding:13px;text-align:left;font-weight:700}.quick small{display:block;color:var(--muted);font-weight:500;margin-top:3px}.view{display:none}.view.active{display:block}.modal{position:fixed;inset:0;background:#10182888;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.open{display:flex}.modalcard{background:#fff;width:min(520px,100%);border-radius:20px;padding:20px}.field{display:grid;gap:6px;margin:12px 0}.field input,.field textarea,.field select{border:1px solid var(--line);border-radius:10px;padding:11px}.mobile{display:none}
 @media(max-width:900px){.app{grid-template-columns:1fr}aside{display:none}main{padding:18px 14px 85px}.title{font-size:27px}.hero{flex-direction:column;align-items:flex-start}.stats{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.mobile{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:15}.mobile button{border:0;background:#fff;padding:9px 2px;font-size:11px}.mobile button.active{color:var(--accent);font-weight:800}}
 @media(max-width:520px){.stats{gap:10px}.card{padding:14px}.value{font-size:23px}.quick{grid-template-columns:1fr}.hero{padding:18px}}
-</style></head>
+ .plannerbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.plannergrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.plannerday{min-height:72px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:7px;cursor:pointer}.plannerday:hover{border-color:#a5b4fc}.plannerday.muted{opacity:.45}.plannerday.today{outline:2px solid var(--accent)}.plannerday.selected{background:#eef2ff}.plannernum{font-weight:800;font-size:12px}.plannerevent{display:block;margin-top:4px;padding:3px 5px;border-radius:6px;background:#f3f4ff;color:#4338ca;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.plannerlist{display:grid;gap:9px}.plannerempty{padding:20px;text-align:center;color:var(--muted);border:1px dashed #cbd5e1;border-radius:12px}@media(max-width:520px){.plannerday{min-height:58px;padding:5px}.plannerevent{font-size:9px}.plannergrid{gap:4px}}\n</style></head>
 <body><div class="app">
 <aside><div class="brand"><div class="mark">L</div>LIFEOS</div><nav class="nav">
-<button class="active" data-view="dashboard">◉ &nbsp;Command Center</button><button data-view="focus">✓ &nbsp;Daily Focus</button><button data-view="goals">◎ &nbsp;Goals & Missions</button><button data-view="habits">↻ &nbsp;Habits</button><button data-view="growth">↗ &nbsp;Growth</button><button data-view="decisions">◇ &nbsp;Decision Room</button><button data-view="life">▣ &nbsp;Life System</button><button data-view="profile">◉ &nbsp;Profile</button>
+<button class="active" data-view="dashboard">◉ &nbsp;Command Center</button><button data-view="focus">✓ &nbsp;Daily Focus</button><button data-view="goals">◎ &nbsp;Goals & Missions</button><button data-view="habits">↻ &nbsp;Habits</button><button data-view="planner">▦ &nbsp;Planner</button><button data-view="growth">↗ &nbsp;Growth</button><button data-view="decisions">◇ &nbsp;Decision Room</button><button data-view="life">▣ &nbsp;Life System</button><button data-view="profile">◉ &nbsp;Profile</button>
 </nav></aside>
 <main><div class="top"><div><div class="eyebrow">YOUR LIFE, ORGANIZED</div><h1 class="title" id="title">Command Center</h1><p class="sub" id="subtitle">See what matters today and move it forward.</p></div><div class="sub" id="date"></div></div>
 
@@ -27,7 +27,29 @@ main{padding:28px;max-width:1500px;width:100%;margin:auto}.top{display:flex;just
 <section class="view" id="view-growth"><div class="grid two"><div class="card"><div class="head"><h3>Growth overview</h3></div><p class="sub">Your growth system will turn consistent actions into measurable progress.</p><div style="margin-top:20px">Foundation · 25%</div></div><div class="card"><div class="head"><h3>Achievements</h3></div><div class="empty">Achievements will unlock as you complete goals, focus items, and habits.</div></div></div></section>
 <section class="view" id="view-decisions"><div class="card"><div class="head"><h3>Decision Room</h3><button class="btn" onclick="openModal('decision')">+ New decision</button></div><p class="sub">Structure options, trade-offs, evidence, and your next step.</p><div id="decisionList" class="list" style="margin-top:16px"></div></div></section>
 <section class="view" id="view-life"><div class="card"><div class="head"><h3>Life System</h3><button class="btn" onclick="openLifeModal('area')">+ Add area</button></div><p class="sub">Organize the important areas of your life and keep each one moving.</p><div id="areaList" class="list" style="margin-top:16px"></div></div></section>
-<section class="view" id="view-profile"><div class="grid two"><div class="card"><div class="head"><h3>Personal Profile</h3><button class="btn" onclick="openLifeModal('profile')">Edit</button></div><div id="profileView" class="sub"></div></div><div class="card"><div class="head"><h3>Life snapshot</h3></div><div id="snapshot" class="list"></div></div></div></section><section class="view" id="view-more"><div class="grid two"><div class="card"><div class="head"><h3>More LIFEOS</h3></div><div class="quick"><button onclick="navigate('growth')">↗ Growth<small>Momentum and achievements</small></button><button onclick="navigate('decisions')">◇ Decision Room<small>Structure an important choice</small></button><button onclick="navigate('life')">▣ Life System<small>Manage important life areas</small></button><button onclick="navigate('profile')">◉ Profile<small>Personal direction and snapshot</small></button></div></div><div class="card"><div class="head"><h3>Data</h3></div><div class="quick"><button onclick="openBackup('export')">⇩ Backup<small>Export your LIFEOS data</small></button><button onclick="openBackup('import')">⇧ Restore<small>Import a previous backup</small></button></div></div></div></section></main></div>
+<section class="view" id="view-profile"><div class="grid two"><div class="card"><div class="head"><h3>Personal Profile</h3><button class="btn" onclick="openLifeModal('profile')">Edit</button></div><div id="profileView" class="sub"></div></div><div class="card"><div class="head"><h3>Life snapshot</h3></div><div id="snapshot" class="list"></div></div></div></section>
+<section class="view" id="view-planner">
+  <div class="card">
+    <div class="plannerbar">
+      <div><h3 style="margin:0">Planner</h3><p class="sub">Plan important actions, appointments and deadlines.</p></div>
+      <button class="btn" onclick="openPlannerModal()">+ Add event</button>
+    </div>
+    <div class="plannerbar" style="margin-top:16px">
+      <button class="btn soft" onclick="plannerMove(-1)">← Previous</button>
+      <strong id="plannerMonth"></strong>
+      <button class="btn soft" onclick="plannerMove(1)">Next →</button>
+    </div>
+    <div class="plannergrid" style="margin-top:14px">
+      <div class="label">Sun</div><div class="label">Mon</div><div class="label">Tue</div><div class="label">Wed</div><div class="label">Thu</div><div class="label">Fri</div><div class="label">Sat</div>
+    </div>
+    <div id="plannerGrid" class="plannergrid" style="margin-top:6px"></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="head"><h3 id="plannerSelectedTitle">Upcoming</h3><span class="label" id="plannerCount"></span></div>
+    <div id="plannerList" class="plannerlist"></div>
+  </div>
+</section>
+<section class="view" id="view-more"><div class="grid two"><div class="card"><div class="head"><h3>More LIFEOS</h3></div><div class="quick"><button onclick="navigate('growth')">↗ Growth<small>Momentum and achievements</small></button><button onclick="navigate('decisions')">◇ Decision Room<small>Structure an important choice</small></button><button onclick="navigate('life')">▣ Life System<small>Manage important life areas</small></button><button onclick="navigate('profile')">◉ Profile<small>Personal direction and snapshot</small></button></div></div><div class="card"><div class="head"><h3>Data</h3></div><div class="quick"><button onclick="openBackup('export')">⇩ Backup<small>Export your LIFEOS data</small></button><button onclick="openBackup('import')">⇧ Restore<small>Import a previous backup</small></button></div></div></div></section></main></div>
 <nav class="mobile"><button class="active" data-view="dashboard">⌂<br>Home</button><button data-view="focus">✓<br>Focus</button><button data-view="goals">◎<br>Goals</button><button data-view="habits">↻<br>Habits</button><button data-view="more">☰<br>More</button></nav>
 <div class="modal" id="modal"><div class="modalcard"><div class="head"><h3 id="modalTitle">Add</h3><button class="link" onclick="closeModal()">Close</button></div><form id="form"></form></div></div>
 <script>
@@ -232,5 +254,69 @@ var oldRender=render;render=function(){oldRender();renderLife()};render();
   validateState();
   window.render();
   if(!state.onboarding.complete && !state.profile.name)setTimeout(showOnboarding,250);
+})();
+</script><script>
+(function(){
+  state.calendarEvents=Array.isArray(state.calendarEvents)?state.calendarEvents:[];
+  var plannerCursor=new Date();
+  var plannerSelected=localDateKey();
+
+  window.openPlannerModal=function(){
+    var form=document.getElementById("form");
+    document.getElementById("modalTitle").textContent="Add planner event";
+    form.innerHTML='<div class="field"><label>Title</label><input name="title" required maxlength="120"></div>'+
+      '<div class="field"><label>Date</label><input name="date" type="date" value="'+plannerSelected+'" required></div>'+
+      '<div class="field"><label>Time</label><input name="time" type="time"></div>'+
+      '<div class="field"><label>Notes</label><textarea name="notes" rows="3" maxlength="500" placeholder="Optional details"></textarea></div>'+
+      '<button class="btn" type="submit">Save event</button>';
+    form.onsubmit=function(e){e.preventDefault();var f=new FormData(form);state.calendarEvents.push({id:uid(),title:f.get("title"),date:f.get("date"),time:f.get("time"),notes:f.get("notes")});plannerSelected=f.get("date");closeModal();save();};
+    document.getElementById("modal").classList.add("open");
+  };
+  window.plannerMove=function(delta){plannerCursor.setMonth(plannerCursor.getMonth()+delta);renderPlanner();};
+  window.plannerSelect=function(date){plannerSelected=date;renderPlanner();};
+  window.deletePlannerEvent=function(i){if(confirm("Delete this planner event?")){state.calendarEvents.splice(i,1);save();}};
+  function iso(y,m,d){return y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");}
+  function eventsOn(date){return state.calendarEvents.filter(function(e){return e.date===date;}).sort(function(a,b){return (a.time||"99:99").localeCompare(b.time||"99:99");});}
+  window.renderPlanner=function(){
+    var grid=document.getElementById("plannerGrid");if(!grid)return;
+    var y=plannerCursor.getFullYear(),m=plannerCursor.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0);
+    document.getElementById("plannerMonth").textContent=first.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+    var html="";
+    for(var i=0;i<first.getDay();i++)html+='<div class="plannerday muted"></div>';
+    for(var d=1;d<=last.getDate();d++){
+      var date=iso(y,m,d),ev=eventsOn(date),cls="plannerday"+(date===localDateKey()?" today":"")+(date===plannerSelected?" selected":"");
+      html+='<button class="'+cls+'" onclick="plannerSelect(\''+date+'\')" aria-label="'+date+'"><span class="plannernum">'+d+'</span>'+ev.slice(0,3).map(function(e){return '<span class="plannerevent">'+esc(e.time?e.time+" ":"")+esc(e.title)+'</span>';}).join("")+(ev.length>3?'<span class="plannerevent">+'+(ev.length-3)+' more</span>':"")+'</button>';
+    }
+    grid.innerHTML=html;
+    var selected=eventsOn(plannerSelected),list=document.getElementById("plannerList");
+    document.getElementById("plannerSelectedTitle").textContent=plannerSelected===localDateKey()?"Today's plan":new Date(plannerSelected+"T12:00:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+    document.getElementById("plannerCount").textContent=selected.length+" event"+(selected.length===1?"":"s");
+    list.innerHTML=selected.length?selected.map(function(e){
+      var idx=state.calendarEvents.indexOf(e);
+      return '<div class="item"><div class="itemmain"><div class="itemtitle">'+esc(e.title)+'</div><div class="meta">'+esc(e.time||"Any time")+(e.notes?" · "+esc(e.notes):"")+'</div></div><button class="link" onclick="deletePlannerEvent('+idx+')">Delete</button></div>';
+    }).join(""):'<div class="plannerempty">No events for this date. Add something important to your plan.</div>';
+  };
+  var oldRender=window.render;
+  window.render=function(){oldRender();renderPlanner();};
+  var oldNavigate=window.navigate;
+  window.navigate=function(v){
+    oldNavigate(v);
+    if(v==="planner")renderPlanner();
+  };
+  var oldOpenBackup=window.openBackup;
+  window.openBackup=function(mode){
+    if(mode!=="import"){oldOpenBackup(mode);return;}
+    var input=document.createElement("input");input.type="file";input.accept=".json,application/json";
+    input.onchange=function(){var f=input.files&&input.files[0];if(!f)return;var reader=new FileReader();
+      reader.onload=function(){try{var data=JSON.parse(reader.result);if(!data||typeof data!=="object")throw new Error();
+        state={tasks:Array.isArray(data.tasks)?data.tasks:[],goals:Array.isArray(data.goals)?data.goals:[],habits:Array.isArray(data.habits)?data.habits:[],decisions:Array.isArray(data.decisions)?data.decisions:[],missions:Array.isArray(data.missions)?data.missions:[],areas:Array.isArray(data.areas)?data.areas:[],profile:data.profile&&typeof data.profile==="object"?data.profile:{name:"",role:"",vision:""},achievements:Array.isArray(data.achievements)?data.achievements:[],onboarding:data.onboarding||{complete:false},calendarEvents:Array.isArray(data.calendarEvents)?data.calendarEvents:[]};
+        localStorage.setItem(KEY,JSON.stringify(state));render();alert("LIFEOS backup restored.");
+      }catch(e){alert("That backup file could not be restored.");}};
+      reader.readAsText(f);
+    };input.click();
+  };
+  var quick=document.querySelector("#view-more .quick");
+  if(quick&&!document.getElementById("plannerMore"))quick.insertAdjacentHTML("afterbegin",'<button id="plannerMore" onclick="navigate(\'planner\')">▦ Planner<small>Plan dates, appointments and deadlines</small></button>');
+  renderPlanner();
 })();
 </script></body></html>
