@@ -31,7 +31,7 @@ main{padding:28px;max-width:1500px;width:100%;margin:auto}.top{display:flex;just
 <nav class="mobile"><button class="active" data-view="dashboard">⌂<br>Home</button><button data-view="focus">✓<br>Focus</button><button data-view="goals">◎<br>Goals</button><button data-view="habits">↻<br>Habits</button><button data-view="more">☰<br>More</button></nav>
 <div class="modal" id="modal"><div class="modalcard"><div class="head"><h3 id="modalTitle">Add</h3><button class="link" onclick="closeModal()">Close</button></div><form id="form"></form></div></div>
 <script>
-var KEY="lifeos.v1";var state=load();var titles={dashboard:["Command Center","See what matters today and move it forward."],focus:["Daily Focus","Turn today's priorities into clear actions."],goals:["Goals & Missions","Define outcomes that matter."],habits:["Habits","Build consistency through small repeatable actions."],growth:["Growth","Turn actions into visible progress."],decisions:["Decision Room","Structure important choices before you act."]};
+var KEY="lifeos.v1";function localDateKey(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}var state=load();var titles={dashboard:["Command Center","See what matters today and move it forward."],focus:["Daily Focus","Turn today's priorities into clear actions."],goals:["Goals & Missions","Define outcomes that matter."],habits:["Habits","Build consistency through small repeatable actions."],growth:["Growth","Turn actions into visible progress."],decisions:["Decision Room","Structure important choices before you act."]};
 function load(){try{return Object.assign({tasks:[],goals:[],habits:[],decisions:[]},JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){return {tasks:[],goals:[],habits:[],decisions:[]}}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
 function esc(s){return String(s||"").replace(/[&<>"']/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]})}
@@ -52,7 +52,7 @@ render();if("serviceWorker" in navigator)window.addEventListener("load",function
   function persist(){localStorage.setItem(KEY,JSON.stringify(state));render();}
   window.save=persist;
   window.completeHabit=function(i){
-    var h=state.habits[i],today=new Date().toISOString().slice(0,10);
+    var h=state.habits[i],today=localDateKey();
     if(h.lastCompleted===today)return;
     var yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
     h.streak=h.lastCompleted===yesterday?(h.streak||0)+1:1;
@@ -70,7 +70,7 @@ render();if("serviceWorker" in navigator)window.addEventListener("load",function
   window.openBackup=function(mode){
     if(mode==="export"){
       var blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");
-      a.href=URL.createObjectURL(blob);a.download="lifeos-backup-"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href);
+      a.href=URL.createObjectURL(blob);a.download="lifeos-backup-"+localDateKey()+".json";a.click();URL.revokeObjectURL(a.href);
     }else{var input=document.createElement("input");input.type="file";input.accept=".json,application/json";input.onchange=function(){var f=input.files&&input.files[0];if(!f)return;var reader=new FileReader();reader.onload=function(){try{var data=JSON.parse(reader.result);if(!data||typeof data!=="object")throw new Error();state={tasks:Array.isArray(data.tasks)?data.tasks:[],goals:Array.isArray(data.goals)?data.goals:[],habits:Array.isArray(data.habits)?data.habits:[],decisions:Array.isArray(data.decisions)?data.decisions:[],missions:Array.isArray(data.missions)?data.missions:[]};persist();alert("LIFEOS backup restored.");}catch(e){alert("That backup file could not be restored.");}};reader.readAsText(f);};input.click();}
   };
   window.openModal=function(type){
@@ -85,7 +85,7 @@ render();if("serviceWorker" in navigator)window.addEventListener("load",function
     document.getElementById("form").innerHTML='<div class="field"><label>Title</label><input name="title" required maxlength="100" autofocus></div>'+extra+'<button class="btn" type="submit">Save</button>';
     document.getElementById("form").onsubmit=function(e){
       e.preventDefault();var f=new FormData(e.target),o={id:uid(),title:f.get("title")};
-      if(type==="task"){o.priority=f.get("priority");o.done=false;o.date=new Date().toISOString().slice(0,10);state.tasks.push(o);}
+      if(type==="task"){o.priority=f.get("priority");o.done=false;o.date=localDateKey();state.tasks.push(o);}
       else if(type==="goal"){o.why=f.get("why");o.progress=0;state.goals.push(o);}
       else if(type==="habit"){o.frequency=f.get("frequency");o.streak=0;o.lastCompleted=null;state.habits.push(o);}
       else if(type==="decision"){o.context=f.get("context");o.status="Open";state.decisions.push(o);}
@@ -100,7 +100,7 @@ render();if("serviceWorker" in navigator)window.addEventListener("load",function
   };
   window.toggleTask=function(i){state.tasks[i].done=!state.tasks[i].done;persist();};
   window.render=function(){
-    var today=new Date().toISOString().slice(0,10);
+    var today=localDateKey();
     var todayTasks=state.tasks.filter(function(x){return !x.date||x.date===today});
     var done=todayTasks.filter(function(x){return x.done}).length;
     document.getElementById("date").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"});
