@@ -1,0 +1,8 @@
+{
+  "appId": "com.acidampon.lifeos",
+  "appName": "LIFEOS",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
