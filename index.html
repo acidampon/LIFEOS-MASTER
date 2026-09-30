@@ -27,7 +27,7 @@ main{padding:28px;max-width:1500px;width:100%;margin:auto}.top{display:flex;just
 <section class="view" id="view-growth"><div class="grid two"><div class="card"><div class="head"><h3>Growth overview</h3></div><p class="sub">Your growth system will turn consistent actions into measurable progress.</p><div style="margin-top:20px">Foundation · 25%</div></div><div class="card"><div class="head"><h3>Achievements</h3></div><div class="empty">Achievements will unlock as you complete goals, focus items, and habits.</div></div></div></section>
 <section class="view" id="view-decisions"><div class="card"><div class="head"><h3>Decision Room</h3><button class="btn" onclick="openModal('decision')">+ New decision</button></div><p class="sub">Structure options, trade-offs, evidence, and your next step.</p><div id="decisionList" class="list" style="margin-top:16px"></div></div></section>
 <section class="view" id="view-life"><div class="card"><div class="head"><h3>Life System</h3><button class="btn" onclick="openLifeModal('area')">+ Add area</button></div><p class="sub">Organize the important areas of your life and keep each one moving.</p><div id="areaList" class="list" style="margin-top:16px"></div></div></section>
-<section class="view" id="view-profile"><div class="grid two"><div class="card"><div class="head"><h3>Personal Profile</h3><button class="btn" onclick="openLifeModal('profile')">Edit</button></div><div id="profileView" class="sub"></div></div><div class="card"><div class="head"><h3>Life snapshot</h3></div><div id="snapshot" class="list"></div></div></div></section></main></div>
+<section class="view" id="view-profile"><div class="grid two"><div class="card"><div class="head"><h3>Personal Profile</h3><button class="btn" onclick="openLifeModal('profile')">Edit</button></div><div id="profileView" class="sub"></div></div><div class="card"><div class="head"><h3>Life snapshot</h3></div><div id="snapshot" class="list"></div></div></div></section><section class="view" id="view-more"><div class="grid two"><div class="card"><div class="head"><h3>More LIFEOS</h3></div><div class="quick"><button onclick="navigate('growth')">↗ Growth<small>Momentum and achievements</small></button><button onclick="navigate('decisions')">◇ Decision Room<small>Structure an important choice</small></button><button onclick="navigate('life')">▣ Life System<small>Manage important life areas</small></button><button onclick="navigate('profile')">◉ Profile<small>Personal direction and snapshot</small></button></div></div><div class="card"><div class="head"><h3>Data</h3></div><div class="quick"><button onclick="openBackup('export')">⇩ Backup<small>Export your LIFEOS data</small></button><button onclick="openBackup('import')">⇧ Restore<small>Import a previous backup</small></button></div></div></div></section></main></div>
 <nav class="mobile"><button class="active" data-view="dashboard">⌂<br>Home</button><button data-view="focus">✓<br>Focus</button><button data-view="goals">◎<br>Goals</button><button data-view="habits">↻<br>Habits</button><button data-view="more">☰<br>More</button></nav>
 <div class="modal" id="modal"><div class="modalcard"><div class="head"><h3 id="modalTitle">Add</h3><button class="link" onclick="closeModal()">Close</button></div><form id="form"></form></div></div>
 <script>
@@ -183,7 +183,7 @@ var oldRender=render;render=function(){oldRender();renderLife()};render();
   var oldRender=window.render;
   window.render=function(){oldRender();renderDecisionRoom();};
   window.navigate=function(v){
-    if(v==="more"){alert("Use the sidebar on larger screens. On mobile, open Profile or Decision Room from the Command Center quick actions.");return;}
+    if(v==="more"){}
     var t={dashboard:["Command Center","See what matters today and move it forward."],focus:["Daily Focus","Turn today's priorities into clear actions."],goals:["Goals & Missions","Define outcomes that matter."],habits:["Habits","Build consistency through small repeatable actions."],growth:["Growth","Turn actions into visible progress."],decisions:["Decision Room","Structure important choices before you act."],life:["Life System","Organize the important areas of your life."],profile:["Profile","Keep your personal direction and life snapshot close."]};
     document.querySelectorAll(".view").forEach(function(x){x.classList.remove("active")});var target=document.getElementById("view-"+v);if(target)target.classList.add("active");
     document.querySelectorAll("[data-view]").forEach(function(x){x.classList.toggle("active",x.dataset.view===v)});
@@ -197,5 +197,40 @@ var oldRender=render;render=function(){oldRender();renderLife()};render();
     var input=document.createElement("input");input.type="file";input.accept=".json,application/json";input.onchange=function(){var f=input.files&&input.files[0];if(!f)return;var reader=new FileReader();reader.onload=function(){try{var data=JSON.parse(reader.result);if(!data||typeof data!=="object")throw new Error();state={tasks:Array.isArray(data.tasks)?data.tasks:[],goals:Array.isArray(data.goals)?data.goals:[],habits:Array.isArray(data.habits)?data.habits:[],decisions:Array.isArray(data.decisions)?data.decisions:[],missions:Array.isArray(data.missions)?data.missions:[],areas:Array.isArray(data.areas)?data.areas:[],profile:data.profile&&typeof data.profile==="object"?data.profile:{name:"",role:"",vision:""},achievements:Array.isArray(data.achievements)?data.achievements:[],onboarding:data.onboarding||{complete:false}};localStorage.setItem(KEY,JSON.stringify(state));render();alert("LIFEOS backup restored.");}catch(e){alert("That backup file could not be restored.");}};reader.readAsText(f);};input.click();
   };
   window.render();renderDecisionRoom();
+})();
+</script>
+<script>
+(function(){
+  function validArray(v){return Array.isArray(v)?v:[]}
+  function validateState(){
+    state.tasks=validArray(state.tasks).filter(function(x){return x&&typeof x==="object"});
+    state.goals=validArray(state.goals).filter(function(x){return x&&typeof x==="object"});
+    state.habits=validArray(state.habits).filter(function(x){return x&&typeof x==="object"});
+    state.decisions=validArray(state.decisions).filter(function(x){return x&&typeof x==="object"});
+    state.missions=validArray(state.missions).filter(function(x){return x&&typeof x==="object"});
+    state.areas=validArray(state.areas).filter(function(x){return x&&typeof x==="object"});
+    state.achievements=validArray(state.achievements);
+    state.profile=state.profile&&typeof state.profile==="object"?state.profile:{name:"",role:"",vision:""};
+    state.onboarding=state.onboarding&&typeof state.onboarding==="object"?state.onboarding:{complete:false};
+    state.goals.forEach(function(g){g.progress=Math.max(0,Math.min(100,Number(g.progress)||0))});
+    state.habits.forEach(function(h){h.streak=Math.max(0,Number(h.streak)||0)});
+    state.areas.forEach(function(a){a.progress=Math.max(0,Math.min(100,Number(a.progress)||0))});
+  }
+  validateState();
+  var originalSave=window.save;
+  window.save=function(){validateState();localStorage.setItem(KEY,JSON.stringify(state));render();};
+  function showOnboarding(){
+    if(state.onboarding.complete)return;
+    var modal=document.getElementById("modal"),form=document.getElementById("form");
+    document.getElementById("modalTitle").textContent="Welcome to LIFEOS";
+    form.innerHTML='<p class="sub">Set your direction once. You can change it later from Profile.</p><div class="field"><label>Your name</label><input name="name" maxlength="80" value="'+esc(state.profile.name||"")+'" required></div><div class="field"><label>Your role</label><input name="role" maxlength="100" placeholder="Teacher, entrepreneur, professional..."></div><div class="field"><label>Personal vision</label><textarea name="vision" rows="3" maxlength="500" placeholder="What do you want your life to move toward?"></textarea></div><div class="field"><label>First life area</label><select name="kind"><option>Career</option><option>Health</option><option>Finance</option><option>Relationships</option><option>Faith</option><option>Learning</option><option>Home</option><option>Other</option></select></div><button class="btn" type="submit">Start LIFEOS</button>';
+    form.onsubmit=function(e){e.preventDefault();var f=new FormData(e.target);state.profile={name:f.get("name"),role:f.get("role"),vision:f.get("vision")};state.areas.push({id:uid(),title:f.get("kind"),kind:f.get("kind"),progress:0});state.onboarding={complete:true,completedAt:new Date().toISOString()};localStorage.setItem(KEY,JSON.stringify(state));closeModal();render();};
+    modal.classList.add("open");
+  }
+  var previousRender=window.render;
+  window.render=function(){previousRender();renderDecisionRoom();renderLife();};
+  validateState();
+  window.render();
+  if(!state.onboarding.complete && !state.profile.name)setTimeout(showOnboarding,250);
 })();
 </script></body></html>
