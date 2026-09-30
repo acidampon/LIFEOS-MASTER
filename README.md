@@ -2,7 +2,7 @@
 
 **LIFEOS** is a personal life operating system for managing daily focus, goals, missions, habits, growth, decisions, and personal progress in one place.
 
-## Current foundation — v1.3.0
+## Current foundation — v1.3.1
 
 - Command Center dashboard with daily metrics
 - Daily Focus with completion state and priority
@@ -51,3 +51,9 @@ LIFEOS is being built incrementally as a modular personal operating system. The 
 ## Version
 
 1.3.0
+
+
+## v1.3.1 maintenance
+- Uses the device's local calendar date for daily focus and habit completion.
+- Refreshes the PWA service-worker cache when the app version changes.
+- Keeps filtered daily focus actions tied to their original records.
