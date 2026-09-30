@@ -10,10 +10,10 @@
 - Missions linked to goals
 - Habits with daily completion protection and streaks
 - Growth dashboard with measurable momentum and achievement milestones
-- Decision Room foundation
+- Decision Room with context, options, pros/cons, chosen option, next action, and status
 - Local-first persistence using browser storage
 - JSON backup and restore
-- Responsive mobile-first interface
+- Responsive mobile-first interface with mobile access to Profile and Life System
 - PWA manifest and offline service-worker foundation
 - Automated GitHub Actions QA
 - GitHub Pages deployment workflow
