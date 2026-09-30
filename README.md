@@ -2,7 +2,7 @@
 
 **LIFEOS** is a personal life operating system for managing daily focus, goals, missions, habits, growth, decisions, and personal progress in one place.
 
-## Current foundation — v1.4.0
+## Current foundation — v1.5.0
 
 - Command Center dashboard with daily metrics
 - Daily Focus with completion state and priority
@@ -19,7 +19,7 @@
 - PWA manifest and offline service-worker foundation
 - Automated GitHub Actions QA
 - GitHub Pages deployment workflow
-- Planner calendar with dated events, times, notes, monthly navigation, and daily agenda
+- Planner calendar with dated events, times, notes, monthly navigation, daily agenda, and reminders
 
 ## Product architecture
 
@@ -35,7 +35,7 @@ LIFEOS is being built incrementally as a modular personal operating system. The 
 6. Growth, achievements and progress history
 7. Decision Room
 8. Life System and personal areas
-9. Calendar and reminders
+9. Calendar, reminders, and notifications
 10. Data validation, backup and restore
 11. Accessibility, responsive QA and production hardening
 
@@ -63,3 +63,9 @@ LIFEOS is being built incrementally as a modular personal operating system. The 
 - Uses the device's local calendar date for daily focus and habit completion.
 - Refreshes the PWA service-worker cache when the app version changes.
 - Keeps filtered daily focus actions tied to their original records.
+
+## v1.5.0 reminder release
+- Adds optional reminders to Planner events.
+- Android builds use Capacitor Local Notifications for scheduled notifications.
+- Users can explicitly enable notification permission from the More section.
+- Reminder schedules are restored from LIFEOS data and re-scheduled when the app starts.
