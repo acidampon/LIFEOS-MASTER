@@ -2,7 +2,7 @@
 
 **LIFEOS** is a personal life operating system for managing daily focus, goals, missions, habits, growth, decisions, and personal progress in one place.
 
-## Current foundation — v1.2.0
+## Current foundation — v1.3.0
 
 - Command Center dashboard with daily metrics
 - Daily Focus with completion state and priority
@@ -11,6 +11,8 @@
 - Habits with daily completion protection and streaks
 - Growth dashboard with measurable momentum and achievement milestones
 - Decision Room with context, options, pros/cons, chosen option, next action, and status
+- First-run onboarding for profile and life direction
+- State validation and safer backup restoration
 - Local-first persistence using browser storage
 - JSON backup and restore
 - Responsive mobile-first interface with mobile access to Profile and Life System
@@ -48,4 +50,4 @@ LIFEOS is being built incrementally as a modular personal operating system. The 
 
 ## Version
 
-1.2.0
+1.3.0
