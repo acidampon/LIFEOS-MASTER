@@ -128,4 +128,38 @@ function openLifeModal(type){
 }
 function renderLife(){var a=document.getElementById("areaList");if(a)a.innerHTML=state.areas.length?state.areas.map(function(x,i){return '<div class="item"><div class="itemmain"><div class="itemtitle">'+esc(x.title)+'</div><div class="meta">'+esc(x.kind)+' · '+(x.progress||0)+'% active</div></div><button class="btn soft" onclick="state.areas['+i+'].progress=Math.min(100,(state.areas['+i+'].progress||0)+10);save()">+10%</button><button class="link" onclick="state.areas.splice('+i+',1);save()">Delete</button></div>'}).join(""):'<div class="empty">No life areas yet. Add the areas that matter most to you.</div>';var p=document.getElementById("profileView");if(p)p.innerHTML=state.profile.name?'<strong>'+esc(state.profile.name)+'</strong><br>'+esc(state.profile.role||"")+(state.profile.vision?'<br><br><strong>Vision</strong><br>'+esc(state.profile.vision):""):'<div class="empty">Set up your personal profile.</div>';var s=document.getElementById("snapshot");if(s)s.innerHTML='<div class="item"><div class="itemmain"><div class="itemtitle">'+state.tasks.length+' focus items</div><div class="meta">'+state.tasks.filter(function(x){return x.done}).length+' completed</div></div></div><div class="item"><div class="itemmain"><div class="itemtitle">'+state.goals.length+' goals</div><div class="meta">'+state.missions.filter(function(x){return x.done}).length+' missions completed</div></div></div><div class="item"><div class="itemmain"><div class="itemtitle">'+state.habits.length+' habits</div><div class="meta">Best streak: '+state.habits.reduce(function(m,x){return Math.max(m,x.streak||0)},0)+' days</div></div></div>'}
 var oldRender=render;render=function(){oldRender();renderLife()};render();
+</script>
+<script>
+(function(){
+  state.achievements=Array.isArray(state.achievements)?state.achievements:[];
+  function unlocked(id){return state.achievements.indexOf(id)>=0}
+  function syncAchievements(){
+    var rules=[
+      ["first-focus","First Focus",state.tasks.length>0,"Create your first focus item."],
+      ["first-focus-done","Momentum Started",state.tasks.some(function(x){return x.done}),"Complete your first focus item."],
+      ["first-goal","Goal Setter",state.goals.length>0,"Create your first goal."],
+      ["first-mission","Action Builder",state.missions.length>0,"Create your first mission."],
+      ["first-habit","Habit Builder",state.habits.length>0,"Create your first habit."],
+      ["seven-day-streak","Seven-Day Streak",state.habits.some(function(x){return (x.streak||0)>=7}),"Reach a 7-day habit streak."],
+      ["goal-complete","Goal Completed",state.goals.some(function(x){return (x.progress||0)>=100}),"Reach 100% on a goal."],
+      ["five-focus","Focused",state.tasks.filter(function(x){return x.done}).length>=5,"Complete five focus items."]
+    ];
+    rules.forEach(function(r){if(r[2]&&!unlocked(r[0]))state.achievements.push(r[0])});
+  }
+  var baseSave=window.save;
+  window.save=function(){syncAchievements();localStorage.setItem(KEY,JSON.stringify(state));render();};
+  function growthRender(){
+    syncAchievements();
+    var done=state.tasks.filter(function(x){return x.done}).length;
+    var goalsDone=state.goals.filter(function(x){return (x.progress||0)>=100}).length;
+    var best=state.habits.reduce(function(m,x){return Math.max(m,x.streak||0)},0);
+    var score=Math.min(100,done*5+goalsDone*15+best*5+state.achievements.length*5);
+    var el=document.getElementById("view-growth");
+    if(!el)return;
+    el.innerHTML='<div class="grid two"><div class="card"><div class="head"><h3>Growth overview</h3><span class="label">'+score+'% momentum</span></div><p class="sub">Growth is built from completed actions, goals, habits, and milestones.</p><div style="height:10px;background:#eef2f6;border-radius:10px;margin-top:16px;overflow:hidden"><span style="display:block;height:100%;width:'+score+'%;background:linear-gradient(90deg,#635bff,#22c1dc)"></span></div><div class="list" style="margin-top:16px"><div class="item"><div class="itemmain"><div class="itemtitle">'+done+' focus items completed</div><div class="meta">Keep turning priorities into action.</div></div></div><div class="item"><div class="itemmain"><div class="itemtitle">'+goalsDone+' goals completed</div><div class="meta">Completed outcomes count toward growth.</div></div></div><div class="item"><div class="itemmain"><div class="itemtitle">'+best+' day best habit streak</div><div class="meta">Consistency compounds over time.</div></div></div></div></div><div class="card"><div class="head"><h3>Achievements</h3><span class="label">'+state.achievements.length+' unlocked</span></div><div class="list">'+(state.achievements.length?state.achievements.map(function(id){var names={"first-focus":"First Focus","first-focus-done":"Momentum Started","first-goal":"Goal Setter","first-mission":"Action Builder","first-habit":"Habit Builder","seven-day-streak":"Seven-Day Streak","goal-complete":"Goal Completed","five-focus":"Focused"};return '<div class="item"><div class="itemmain"><div class="itemtitle">✓ '+names[id]+'</div><div class="meta">Milestone unlocked in LIFEOS.</div></div></div>'}).join(""):'<div class="empty">Your first achievement will appear here as you make progress.</div>')+'</div></div></div>';
+  }
+  var previousRender=window.render;
+  window.render=function(){previousRender();growthRender();renderLife();};
+  syncAchievements();window.render();
+})();
 </script></body></html>
