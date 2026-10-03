@@ -4,15 +4,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - "index.html"
-      - "manifest.webmanifest"
-      - "sw.js"
-      - "icon.svg"
-      - "package.json"
-      - "scripts/**"
-      - "capacitor.config.json"
-      - ".github/workflows/build-android.yml"
 
 permissions:
   contents: read
