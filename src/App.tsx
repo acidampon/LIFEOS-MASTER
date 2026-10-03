@@ -41,7 +41,7 @@ const del=(k:keyof AppState,i:string)=>{
       next.tasks=x!.tasks.filter(t=>t.missionId!==i);
       if(mission)next=syncGoalProgress(next,[mission.goalId]);
     }else{
-      next[k]=(x![k]as any[]).filter(a=>a.id!==i);
+      (next as any)[k]=(x![k]as any[]).filter(a=>a.id!==i);
     }
     if(k==="goals")next=syncGoalProgress(next,next.goals.map(g=>g.id));
     return next;
