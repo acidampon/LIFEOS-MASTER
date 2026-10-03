@@ -56,11 +56,11 @@ jobs:
       - name: Copy APK to release folder
         run: |
           mkdir -p release
-          cp android/app/build/outputs/apk/debug/app-debug.apk release/LIFEOS-v1.5.0-debug.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk release/LIFEOS-Android-debug.apk
 
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: LIFEOS-Android-v1.5.0
+          name: LIFEOS-Android-debug
           path: release/LIFEOS-v1.5.0-debug.apk
           retention-days: 30
