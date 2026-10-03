@@ -14,7 +14,7 @@ const capacitor = JSON.parse(await readFile("capacitor.config.json", "utf8"));
 if (capacitor.webDir !== "www") throw new Error("Capacitor webDir must be www");
 
 const html = await readFile("index.html", "utf8");
-const scripts = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)].map(m => m[1]).filter(Boolean);
+const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m => m[1]).filter(Boolean);
 if (!scripts.length) throw new Error("No inline application scripts found");
 scripts.forEach((code, i) => {
   try { new vm.Script(code, { filename: `index.html#script-${i + 1}` }); }
