@@ -1,8 +1,1 @@
-{
-  "appId": "com.acidampon.lifeos",
-  "appName": "LIFEOS",
-  "webDir": "www",
-  "server": {
-    "androidScheme": "https"
-  }
-}
+{"appId":"com.acidampon.lifeos","appName":"LIFEOS","webDir":"dist","server":{"androidScheme":"https"}}
