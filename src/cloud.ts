@@ -26,8 +26,9 @@ export async function pullCloud(token:string):Promise<AppState|null>{
  const rows=await r.json();
  return rows[0]?.state??null;
 }
+function userId(token:string){try{return JSON.parse(atob(token.split(".")[1])).sub as string}catch{return ""}}
 export async function pushCloud(token:string,state:AppState){
  if(!cloudConfigured())throw new Error("Cloud sync is not configured.");
- const r=await fetch(`${REST()}/lifeos_state?on_conflict=user_id`,{method:"POST",headers:{...headers(token),Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({state,updated_at:new Date().toISOString()})});
+ const r=await fetch(`${REST()}/lifeos_state?on_conflict=user_id`,{method:"POST",headers:{...headers(token),Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({user_id:userId(token),state,updated_at:new Date().toISOString()})});
  if(!r.ok)throw new Error("Could not save LIFEOS to the cloud.");
 }
