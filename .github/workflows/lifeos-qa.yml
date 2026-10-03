@@ -28,7 +28,7 @@ jobs:
         run: timeout 60s npm run typecheck
 
       - name: Build production bundle
-        run: DEBUG=vite:* timeout 35s npm run build
+        run: timeout 120s npm run build
 
       - name: Verify release outputs
         run: timeout 60s node scripts/verify-release.mjs
