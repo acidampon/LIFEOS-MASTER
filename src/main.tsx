@@ -1,1 +1,1 @@
-import{createRoot}from"react-dom/client";import{App}from"./App";import"./styles.css";createRoot(document.getElementById("root")!).render(<App/>);
+import{createRoot}from"react-dom/client";import"./styles.css";createRoot(document.getElementById("root")!).render(<main style={{padding:"2rem",fontFamily:"system-ui"}}>LIFEOS build smoke test</main>);
