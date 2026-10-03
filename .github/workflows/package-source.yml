@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+concurrency: {group: lifeos-source-package, cancel-in-progress: true}
 
 jobs:
   package:
