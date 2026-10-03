@@ -27,6 +27,9 @@ jobs:
       - name: Typecheck
         run: timeout 60s npm run typecheck
 
+      - name: Engine behavioral tests
+        run: timeout 60s npm run test:engine
+
       - name: Build production bundle
         run: timeout 120s npm run build
 
