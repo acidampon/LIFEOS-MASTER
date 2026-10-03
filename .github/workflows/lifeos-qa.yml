@@ -25,7 +25,7 @@ jobs:
         run: npm install
 
       - name: Run production release gate
-        run: npm run verify
+        run: timeout 180s npm run verify
 
       - name: Validate production metadata
         run: |
