@@ -30,4 +30,4 @@ jobs:
           test -f dist/sw.js
           test -f dist/icon.svg
           test -f dist/version.json
-          grep -q '"version": "1.5.2"' dist/version.json
+          grep -q '"version":"2.0.0"' dist/version.json
