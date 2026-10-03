@@ -1,31 +1,34 @@
 name: LIFEOS QA
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate required files
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run production release gate
+        run: npm run verify
+
+      - name: Validate production metadata
         run: |
-          test -f index.html
-          test -f manifest.webmanifest
-          test -f sw.js
-          test -f VERSION.txt
-          grep -q "<title>LIFEOS</title>" index.html
-          grep -q '"name":"LIFEOS"' manifest.webmanifest
-      - name: Validate JavaScript syntax
-        run: |
-          node --check sw.js
-          node - <<'NODE'
-          const fs = require("fs");
-          const html = fs.readFileSync("index.html", "utf8");
-          const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)];
-          if (!scripts.length) throw new Error("No application scripts found");
-          scripts.forEach((m, i) => fs.writeFileSync(`/tmp/lifeos-script-${i}.js`, m[1]));
-          console.log(`Validated ${scripts.length} inline script block(s)`);
-          NODE
-          for f in /tmp/lifeos-script-*.js; do node --check "$f"; done
+          test -f www/index.html
+          test -f www/manifest.webmanifest
+          test -f www/sw.js
+          test -f www/icon.svg
+          test -f www/version.json
+          grep -q '"version": "1.5.2"' www/version.json
