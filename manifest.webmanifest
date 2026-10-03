@@ -1,13 +1,14 @@
 {
-  "name":"LIFEOS",
-  "short_name":"LIFEOS",
-  "description":"Personal life operating system for goals, habits, focus, growth, decisions, and achievements.",
-  "start_url":"./",
-  "display":"standalone",
-  "background_color":"#f5f7fb",
-  "theme_color":"#111827",
-  "orientation":"portrait-primary",
-  "icons":[
+  "name": "LIFEOS",
+  "short_name": "LIFEOS",
+  "description": "Personal life operating system for goals, habits, focus, growth, decisions, and achievements.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#111827",
+  "orientation": "portrait-primary",
+  "icons": [
     {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
   ]
 }
