@@ -10,11 +10,13 @@ on:
       - "sw.js"
       - "icon.svg"
       - "package.json"
+      - "scripts/**"
       - "capacitor.config.json"
       - ".github/workflows/build-android.yml"
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
   build:
@@ -27,6 +29,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -34,14 +37,11 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Prepare web assets
-        run: |
-          rm -rf www
-          mkdir -p www
-          cp index.html manifest.webmanifest sw.js icon.svg www/
-
       - name: Install dependencies
         run: npm install
+
+      - name: Production build and release gate
+        run: npm run verify
 
       - name: Create Android project
         run: npx cap add android
@@ -51,16 +51,24 @@ jobs:
 
       - name: Build debug APK
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --no-daemon
 
-      - name: Copy APK to release folder
+      - name: Stage installable APK
         run: |
+          set -euo pipefail
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          test -f "$APK"
           mkdir -p release
-          cp android/app/build/outputs/apk/debug/app-debug.apk release/LIFEOS-Android-debug.apk
+          cp "$APK" "release/LIFEOS-Android-v1.5.2-debug.apk"
+          sha256sum "release/LIFEOS-Android-v1.5.2-debug.apk" | tee "release/SHA256SUMS.txt"
+          ls -lh release/
 
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: LIFEOS-Android-debug
-          path: release/LIFEOS-v1.5.0-debug.apk
+          name: LIFEOS-Android-v1.5.2-debug
+          path: |
+            release/LIFEOS-Android-v1.5.2-debug.apk
+            release/SHA256SUMS.txt
+          if-no-files-found: error
           retention-days: 30
