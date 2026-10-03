@@ -25,9 +25,9 @@ jobs:
 
       - name: Validate production metadata
         run: |
-          test -f www/index.html
-          test -f www/manifest.webmanifest
-          test -f www/sw.js
-          test -f www/icon.svg
-          test -f www/version.json
-          grep -q '"version": "1.5.2"' www/version.json
+          test -f dist/index.html
+          test -f dist/manifest.webmanifest
+          test -f dist/sw.js
+          test -f dist/icon.svg
+          test -f dist/version.json
+          grep -q '"version": "1.5.2"' dist/version.json
