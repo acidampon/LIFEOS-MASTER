@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
   push: {branches: [main]}
 permissions: {contents: read, actions: write}
+concurrency: {group: lifeos-android, cancel-in-progress: true}
 jobs:
   build:
     runs-on: ubuntu-latest
