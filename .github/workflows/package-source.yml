@@ -16,10 +16,10 @@ jobs:
       - name: Create source ZIP
         run: |
           mkdir -p release
-          zip -r release/LIFEOS-MASTER-v1.5.0-source.zip .             -x ".git/*"                ".github/workflows/*"                "release/*"
+          zip -r release/LIFEOS-MASTER-v2.0.0-source.zip .             -x ".git/*"                ".github/workflows/*"                "release/*"
       - name: Upload source ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: LIFEOS-MASTER-v1.5.0-source
-          path: release/LIFEOS-MASTER-v1.5.0-source.zip
+          name: LIFEOS-MASTER-v2.0.0-source
+          path: release/LIFEOS-MASTER-v2.0.0-source.zip
           if-no-files-found: error
