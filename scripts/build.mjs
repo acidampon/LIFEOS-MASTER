@@ -1,16 +1,1 @@
-import { cp, mkdir, rm, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
-
-const files = ["index.html", "manifest.webmanifest", "sw.js", "icon.svg"];
-await rm("www", { recursive: true, force: true });
-await mkdir("www", { recursive: true });
-
-for (const file of files) {
-  if (!existsSync(file)) throw new Error(`Missing production asset: ${file}`);
-  await cp(file, `www/${file}`);
-}
-
-const version = JSON.parse(await (await import("node:fs/promises")).readFile("package.json", "utf8")).version;
-await writeFile("www/version.json", JSON.stringify({ name: "LIFEOS", version, build: "production" }, null, 2) + "\n");
-
-console.log(`LIFEOS production build complete: v${version}`);
+import{rm,mkdir,writeFile}from"node:fs/promises";import{existsSync}from"node:fs";import{execFileSync}from"node:child_process";await rm("dist",{recursive:true,force:true});execFileSync("npx",["vite","build"],{stdio:"inherit"});if(!existsSync("dist/index.html"))throw new Error("Vite did not produce dist/index.html");const pkg=JSON.parse(await import("node:fs/promises").then(x=>x.readFile("package.json","utf8")));await writeFile("dist/version.json",JSON.stringify({name:"LIFEOS",version:pkg.version,build:"production"})+"\n");console.log("LIFEOS production build complete: v"+pkg.version);
