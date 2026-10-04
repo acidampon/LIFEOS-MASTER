@@ -85,4 +85,7 @@ test("habitStreak tracks consecutive periods for each frequency",()=>{
  assert.equal(habitStreak(["2026-10-04","2026-09-21"],"Weekly","2026-10-04"),2);
  assert.equal(habitStreak(["2026-10-04","2026-09-12"],"Monthly","2026-10-04"),2);
  assert.equal(habitStreak(["2026-10-04","2026-10-02"],"Daily","2026-10-04"),1);
+ assert.equal(habitStreak(["2027-01-01","2026-12-31"],"Daily","2027-01-01"),2);
+ assert.equal(habitStreak(["2027-01-01","2026-12-28"],"Weekly","2027-01-01"),2);
+ assert.equal(habitStreak(["2027-01-01","2026-12-15"],"Monthly","2027-01-01"),2);
 });
