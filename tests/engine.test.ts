@@ -75,5 +75,6 @@ test("deriveMissionStatus follows task truth and explicit reset states",()=>{
  assert.equal(deriveMissionStatus([],"Paused"),"Paused");
  assert.equal(deriveMissionStatus([{done:false} as any],"Completed","Completed"),"Completed");
  assert.equal(deriveMissionStatus([{done:false} as any],"In Progress","Paused"),"Paused");
- assert.equal(deriveMissionStatus([{done:false} as any],"Paused"),"Not Started");
+ assert.equal(deriveMissionStatus([{done:false} as any],"Paused"),"Paused");
+ assert.equal(deriveMissionStatus([{done:true} as any],"Paused"),"Paused");
 });
