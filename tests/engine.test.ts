@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { goalProgress, missionProgress, allTasks, recommendation, deriveMissionStatus } from "../src/engine.ts";
+import { goalProgress, missionProgress, allTasks, recommendation, deriveMissionStatus, habitStreak } from "../src/engine.ts";
 import type { AppState, Goal, Mission, Task } from "../src/models.ts";
 
 const base = <T extends object>(value:T):T & {id:string;createdAt:string;updatedAt:string} => ({
@@ -77,4 +77,12 @@ test("deriveMissionStatus follows task truth and explicit reset states",()=>{
  assert.equal(deriveMissionStatus([{done:false} as any],"In Progress","Paused"),"Paused");
  assert.equal(deriveMissionStatus([{done:false} as any],"Paused"),"Paused");
  assert.equal(deriveMissionStatus([{done:true} as any],"Paused"),"Paused");
+});
+
+
+test("habitStreak tracks consecutive periods for each frequency",()=>{
+ assert.equal(habitStreak(["2026-10-04","2026-10-03","2026-10-02"],"Daily","2026-10-04"),3);
+ assert.equal(habitStreak(["2026-10-04","2026-09-29"],"Weekly","2026-10-04"),2);
+ assert.equal(habitStreak(["2026-10-04","2026-09-12"],"Monthly","2026-10-04"),2);
+ assert.equal(habitStreak(["2026-10-04","2026-10-02"],"Daily","2026-10-04"),1);
 });
