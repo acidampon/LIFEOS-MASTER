@@ -28,7 +28,9 @@ async function cloudFetch(input:RequestInfo|URL,init:RequestInit,authRequired=tr
 }
 export async function pullCloud(token:string):Promise<AppState|null>{
  if(!cloudConfigured())throw new Error("Cloud sync is not configured.");
- const r=await cloudFetch(`${REST()}/lifeos_state?select=state&limit=1`,{headers:headers(token)});
+ const uid=userId(token);
+ if(!uid)throw new CloudAuthError("Your cloud session is invalid. Please sign in again.");
+ const r=await cloudFetch(`${REST()}/lifeos_state?select=state&user_id=eq.${encodeURIComponent(uid)}&limit=1`,{headers:headers(token)});
  if(!r.ok)throw new Error("Could not read your LIFEOS cloud data.");
  const rows=await r.json();
  return rows[0]?.state??null;
