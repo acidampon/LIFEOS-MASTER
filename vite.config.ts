@@ -1,1 +1,1 @@
-import{defineConfig}from"vite";export default defineConfig({base:"/LIFEOS-MASTER/"});
+import{defineConfig}from"vite";export default defineConfig({base:"./"});
