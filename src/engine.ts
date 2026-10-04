@@ -10,3 +10,19 @@ export function allTasks(s:AppState){
  for(const m of s.missions)for(const t of m.tasks)byId.set(t.id,{...t,missionId:m.id});
  return [...byId.values()];
 }
+
+export function habitStreak(completions:string[],frequency:"Daily"|"Weekly"|"Monthly",today:string):number{
+ const dates=[...new Set(completions)].sort().reverse();
+ if(!dates.length)return 0;
+ const key=(date:string)=>{const d=new Date(date+"T00:00:00");if(frequency==="Daily")return date;if(frequency==="Weekly"){d.setDate(d.getDate()-((d.getDay()+6)%7));return d.toISOString().slice(0,10)}return date.slice(0,7)};
+ const current=key(today);if(key(dates[0])!==current)return 0;
+ let streak=1,prev=current;
+ for(let i=1;i<dates.length;i++){
+  const k=key(dates[i]);if(k===prev)continue;
+  if(frequency==="Daily"){const d=new Date(prev+"T00:00:00");d.setDate(d.getDate()-1);prev=d.toISOString().slice(0,10)}
+  else if(frequency==="Weekly"){const d=new Date(prev+"T00:00:00");d.setDate(d.getDate()-7);prev=d.toISOString().slice(0,10)}
+  else {const [y,m]=prev.split("-").map(Number);prev=new Date(y,m-2,1).toISOString().slice(0,7)}
+  if(k!==prev)break;streak++;
+ }
+ return streak;
+}
