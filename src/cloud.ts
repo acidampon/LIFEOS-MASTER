@@ -1,7 +1,7 @@
 import type{AppState}from"./models";
 
-const URL=import.meta.env.VITE_LIFEOS_SUPABASE_URL?.replace(/\/$/,"")||"";
-const KEY=import.meta.env.VITE_LIFEOS_SUPABASE_ANON_KEY||"";
+const URL=import.meta.env.VITE_LIFEOS_SUPABASE_URL?.replace(/\/$/,"")||"https://ejwburasdjzuxnkwwbju.supabase.co";
+const KEY=import.meta.env.VITE_LIFEOS_SUPABASE_ANON_KEY||"sb_publishable_cFT9ZRFUxMAP-tlj5gGckw_njrMV_KW";
 const AUTH=()=>`${URL}/auth/v1`;
 const REST=()=>`${URL}/rest/v1`;
 const headers=(token?:string)=>({"Content-Type":"application/json","apikey":KEY,...(token?{Authorization:`Bearer ${token}`}:{})});
