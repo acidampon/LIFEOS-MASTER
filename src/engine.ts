@@ -14,21 +14,16 @@ export function allTasks(s:AppState){
 export function habitStreak(completions:string[],frequency:"Daily"|"Weekly"|"Monthly",today:string):number{
  const dates=[...new Set(completions)].filter(Boolean).sort().reverse();
  if(!dates.length)return 0;
+ const dayIndex=(date:string)=>{const [y,m,d]=date.slice(0,10).split("-").map(Number);return Math.floor(Date.UTC(y,m-1,d)/86400000)};
  const monthIndex=(date:string)=>{const [y,m]=date.slice(0,7).split("-").map(Number);return y*12+(m-1)};
- const weekKey=(date:string)=>{const [y,m,d]=date.slice(0,10).split("-").map(Number);const t=Math.floor(Date.UTC(y,m-1,d)/86400000);const weekday=((t+4)%7+7)%7;return t-(weekday===0?6:weekday-1)};
- const key=(date:string)=>frequency==="Daily"?date.slice(0,10):frequency==="Weekly"?String(weekKey(date)):date.slice(0,7);
+ const weekIndex=(date:string)=>{const day=dayIndex(date);const weekday=(day+3)%7;return Math.floor((day-weekday)/7)};
+ const key=(date:string)=>frequency==="Daily"?dayIndex(date):frequency==="Weekly"?weekIndex(date):monthIndex(date);
  const current=key(today);if(key(dates[0])!==current)return 0;
  let streak=1,prev=current;
  for(let i=1;i<dates.length;i++){
   const k=key(dates[i]);if(k===prev)continue;
-  if(frequency==="Daily"){
-   const [y,m,d]=prev.split("-").map(Number);prev=new Date(Date.UTC(y,m-1,d-1)).toISOString().slice(0,10);
-  }else if(frequency==="Weekly"){
-   prev=String(Number(prev)-7);
-  }else{
-   const idx=monthIndex(prev)-1;prev=String(Math.floor(idx/12)*12+(idx%12));
-  }
-  if(k!==prev)break;streak++;
+  if(k!==prev-1)break;
+  prev=k;streak++;
  }
  return streak;
 }
