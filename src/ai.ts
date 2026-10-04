@@ -1,6 +1,6 @@
 import type{AppState}from"./models";import{recommendation}from"./engine";
 
-const ENDPOINT=import.meta.env.VITE_LIFEOS_AI_ENDPOINT||"";
+const ENDPOINT=((import.meta as ImportMeta & {env?:Record<string,string>}).env?.VITE_LIFEOS_AI_ENDPOINT)||"";
 
 export function aiConfigured(){return Boolean(ENDPOINT)}
 export async function askLifeGuide(state:AppState,question:string){
