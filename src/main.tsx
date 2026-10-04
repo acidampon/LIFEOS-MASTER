@@ -1,1 +1,3 @@
-import{createRoot}from"react-dom/client";import{App}from"./App";import"./styles.css";createRoot(document.getElementById("root")!).render(<App/>);
+import{Component,createRoot}from"react";import type{ErrorInfo,ReactNode}from"react";import{App}from"./App";import"./styles.css";
+class ErrorBoundary extends Component<{children:ReactNode},{error:string}> {state={error:""};static getDerivedStateFromError(error:unknown){return{error:error instanceof Error?error.message:String(error)}}componentDidCatch(error:unknown,info:ErrorInfo){console.error("LIFEOS runtime error",error,info)}render(){if(this.state.error)return <div className="loading"><div><b>LIFEOS</b><h2>LIFEOS hit an unexpected error</h2><p>{this.state.error}</p><button type="button" className="btn" onClick={()=>location.reload()}>Reload LIFEOS</button></div></div>;return this.props.children}}
+createRoot(document.getElementById("root")!).render(<ErrorBoundary><App/></ErrorBoundary>);
