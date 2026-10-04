@@ -52,9 +52,12 @@ const patch=(k:keyof AppState,i:string,o:any)=>setS(x=>{
   if(k==="missions"){
     const mission=next.missions.find(m=>m.id===i);
     if(mission){
-      const tasks=mission.tasks;
-      const status:MissionStatus=tasks.length&&tasks.every(t=>t.done)?"Completed":tasks.some(t=>t.done)?"In Progress":o.status==="In Progress"?"In Progress":mission.status;
-      next={...next,missions:next.missions.map(m=>m.id===i?{...m,status,updatedAt:now()}:m)};
+      const requested=o.status as MissionStatus|undefined;
+      let tasks=mission.tasks;
+      if(requested==="Completed")tasks=tasks.map(t=>({...t,done:true,status:"Completed" as TaskStatus,updatedAt:now()}));
+      if(requested==="Not Started")tasks=tasks.map(t=>({...t,done:false,status:"Not Started" as TaskStatus,updatedAt:now()}));
+      const status:MissionStatus=requested|| (tasks.length&&tasks.every(t=>t.done)?"Completed":tasks.some(t=>t.done)?"In Progress":mission.status);
+      next={...next,missions:next.missions.map(m=>m.id===i?{...m,tasks,status,updatedAt:now()}:m)};
       next=syncGoalProgress(next,[mission.goalId]);
     }
   }
