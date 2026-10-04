@@ -49,6 +49,16 @@ const del=(k:keyof AppState,i:string)=>{
 };
 const patch=(k:keyof AppState,i:string,o:any)=>setS(x=>{
   let next={...x!,[k]:(x![k]as any[]).map(a=>a.id===i?{...a,...o,updatedAt:now()}:a)};
+  if(k==="tasks"){
+    next={...next,tasks:next.tasks.map(t=>{
+      if(t.id!==i)return t;
+      const requestedStatus=o.status as TaskStatus|undefined;
+      const requestedDone=typeof o.done==="boolean"?o.done:undefined;
+      const done=requestedStatus==="Completed"?true:requestedStatus==="In Progress"||requestedStatus==="Not Started"?false:requestedDone??Boolean(t.done);
+      const status:TaskStatus=requestedStatus==="Completed"||done?"Completed":requestedStatus==="Not Started"||requestedStatus==="In Progress"?requestedStatus:(t.status==="Completed"?"In Progress":t.status||"Not Started");
+      return {...t,done,status,updatedAt:now()};
+    })};
+  }
   if(k==="missions"){
     const mission=next.missions.find(m=>m.id===i);
     if(mission){
