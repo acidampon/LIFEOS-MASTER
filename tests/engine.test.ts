@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { goalProgress, missionProgress, allTasks, recommendation } from "../src/engine.ts";
+import { goalProgress, missionProgress, allTasks, recommendation, deriveMissionStatus } from "../src/engine.ts";
 import type { AppState, Goal, Mission, Task } from "../src/models.ts";
 
 const base = <T extends object>(value:T):T & {id:string;createdAt:string;updatedAt:string} => ({
@@ -74,4 +74,6 @@ test("deriveMissionStatus follows task truth and explicit reset states",()=>{
  assert.equal(deriveMissionStatus([{done:true} as any,{done:false} as any],"Not Started"),"In Progress");
  assert.equal(deriveMissionStatus([],"Paused"),"Paused");
  assert.equal(deriveMissionStatus([{done:false} as any],"Completed","Completed"),"Completed");
+ assert.equal(deriveMissionStatus([{done:false} as any],"In Progress","Paused"),"Paused");
+ assert.equal(deriveMissionStatus([{done:false} as any],"Paused"),"Not Started");
 });
