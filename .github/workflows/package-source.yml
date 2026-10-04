@@ -16,11 +16,14 @@ jobs:
         uses: actions/checkout@v4
       - name: Create source ZIP
         run: |
+          set -euo pipefail
+          VERSION=$(node -p "require('./package.json').version")
           mkdir -p release
-          zip -r release/LIFEOS-MASTER-v2.0.0-source.zip .             -x ".git/*"                ".github/workflows/*"                "release/*"
+          zip -r "release/LIFEOS-MASTER-v${VERSION}-source.zip" . -x ".git/*" ".github/workflows/*" "release/*"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
       - name: Upload source ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: LIFEOS-MASTER-v2.0.0-source
-          path: release/LIFEOS-MASTER-v2.0.0-source.zip
+          name: LIFEOS-MASTER-v${{ env.VERSION }}-source
+          path: release/LIFEOS-MASTER-v${{ env.VERSION }}-source.zip
           if-no-files-found: error
