@@ -82,7 +82,7 @@ test("deriveMissionStatus follows task truth and explicit reset states",()=>{
 
 test("habitStreak tracks consecutive periods for each frequency",()=>{
  assert.equal(habitStreak(["2026-10-04","2026-10-03","2026-10-02"],"Daily","2026-10-04"),3);
- assert.equal(habitStreak(["2026-10-04","2026-09-29"],"Weekly","2026-10-04"),2);
+ assert.equal(habitStreak(["2026-10-04","2026-09-21"],"Weekly","2026-10-04"),2);
  assert.equal(habitStreak(["2026-10-04","2026-09-12"],"Monthly","2026-10-04"),2);
  assert.equal(habitStreak(["2026-10-04","2026-10-02"],"Daily","2026-10-04"),1);
 });
