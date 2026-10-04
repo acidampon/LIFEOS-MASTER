@@ -7,7 +7,8 @@ const REST=()=>`${URL}/rest/v1`;
 const headers=(token?:string)=>({"Content-Type":"application/json","apikey":KEY,...(token?{Authorization:`Bearer ${token}`}:{})});
 
 export type CloudSession={access_token:string;refresh_token:string;user:{id:string;email?:string}};
-export class CloudAuthError extends Error{constructor(message="Cloud session expired."){super(message);this.name="CloudAuthError"}}\nexport class CloudConflictError extends Error{constructor(message="Your cloud data changed on another device. Restore the latest cloud copy before syncing this device."){super(message);this.name="CloudConflictError"}}
+export class CloudAuthError extends Error{constructor(message="Cloud session expired."){super(message);this.name="CloudAuthError"}}
+export class CloudConflictError extends Error{constructor(message="Your cloud data changed on another device. Restore the latest cloud copy before syncing this device."){super(message);this.name="CloudConflictError"}}
 
 export function cloudConfigured(){return Boolean(URL&&KEY)}
 export async function signUp(email:string,password:string){return auth("/signup",{email,password})}
