@@ -1,4 +1,4 @@
-import type{AppState}from"./models";
+import type{AppState}from"./models";import{normalizeState}from"./db";
 
 const URL=import.meta.env.VITE_LIFEOS_SUPABASE_URL?.replace(/\/$/,"")||"https://ejwburasdjzuxnkwwbju.supabase.co";
 const KEY=import.meta.env.VITE_LIFEOS_SUPABASE_ANON_KEY||"sb_publishable_cFT9ZRFUxMAP-tlj5gGckw_njrMV_KW";
@@ -34,7 +34,7 @@ export async function pullCloud(token:string):Promise<AppState|null>{
  const r=await cloudFetch(`${REST()}/lifeos_state?select=state&user_id=eq.${encodeURIComponent(uid)}&limit=1`,{headers:headers(token)});
  if(!r.ok)throw new Error("Could not read your LIFEOS cloud data.");
  const rows=await r.json();
- return rows[0]?.state??null;
+ return rows[0]?.state?normalizeState(rows[0].state):null;
 }
 function userId(token:string){try{const part=token.split(".")[1];if(!part)return "";const base64=part.replace(/-/g,"+").replace(/_/g,"/").padEnd(Math.ceil(part.length/4)*4,"=");return JSON.parse(atob(base64)).sub as string}catch{return ""}}
 export async function pushCloud(token:string,state:AppState){
