@@ -66,3 +66,4 @@ test("recommendation ignores completed and paused mission actions",()=>{
   const result = recommendation(state({missions:[completedMission,pausedMission]}));
   assert.equal(result.task,undefined);
 });
+\n\ntest("deriveMissionStatus follows task truth and explicit reset states",()=>{\n assert.equal(deriveMissionStatus([{done:true} as any],"In Progress"),"Completed");\n assert.equal(deriveMissionStatus([{done:false} as any],"Completed"),"Not Started");\n assert.equal(deriveMissionStatus([{done:true} as any,{done:false} as any],"Not Started"),"In Progress");\n assert.equal(deriveMissionStatus([],"Paused"),"Paused");\n assert.equal(deriveMissionStatus([{done:false} as any],"Completed","Completed"),"Completed");\n});\n
