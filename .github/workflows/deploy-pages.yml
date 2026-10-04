@@ -18,3 +18,5 @@ jobs:
         with: {path: ./dist}
       - id: deployment
         uses: actions/deploy-pages@v4
+
+# Pages deployment path hardened in v2.0.1
