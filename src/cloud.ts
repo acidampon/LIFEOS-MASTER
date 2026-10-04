@@ -35,7 +35,7 @@ export async function pullCloud(token:string):Promise<AppState|null>{
  const rows=await r.json();
  return rows[0]?.state??null;
 }
-function userId(token:string){try{return JSON.parse(atob(token.split(".")[1])).sub as string}catch{return ""}}
+function userId(token:string){try{const part=token.split(".")[1];if(!part)return "";const base64=part.replace(/-/g,"+").replace(/_/g,"/").padEnd(Math.ceil(part.length/4)*4,"=");return JSON.parse(atob(base64)).sub as string}catch{return ""}}
 export async function pushCloud(token:string,state:AppState){
  if(!cloudConfigured())throw new Error("Cloud sync is not configured.");
  const uid=userId(token);
