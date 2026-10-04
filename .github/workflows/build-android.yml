@@ -19,16 +19,19 @@ jobs:
       - run: npx cap sync android
       - working-directory: android
         run: ./gradlew assembleDebug --no-daemon
-      - run: |
+      - name: Package APK
+        run: |
           set -euo pipefail
+          VERSION=$(node -p "require('./package.json').version")
           mkdir -p release
-          cp android/app/build/outputs/apk/debug/app-debug.apk release/LIFEOS-Android-v2.0.0-debug.apk
-          sha256sum release/LIFEOS-Android-v2.0.0-debug.apk | tee release/SHA256SUMS.txt
+          cp android/app/build/outputs/apk/debug/app-debug.apk "release/LIFEOS-Android-v${VERSION}-debug.apk"
+          sha256sum "release/LIFEOS-Android-v${VERSION}-debug.apk" | tee release/SHA256SUMS.txt
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
       - uses: actions/upload-artifact@v4
         with:
-          name: LIFEOS-Android-v2.0.0-debug
+          name: LIFEOS-Android-v${{ env.VERSION }}-debug
           path: |
-            release/LIFEOS-Android-v2.0.0-debug.apk
+            release/LIFEOS-Android-v${{ env.VERSION }}-debug.apk
             release/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 30
