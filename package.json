@@ -1,1 +1,30 @@
-{"name":"lifeos-master","version":"2.0.0","private":true,"type":"module","scripts":{"dev":"vite","build":"node scripts/build.mjs","verify":"npm run typecheck && npm run build && node scripts/verify-release.mjs","preview":"vite preview","android:prepare":"npm run build && npx cap sync android","android:debug":"npm run verify && npx cap sync android && cd android && ./gradlew assembleDebug","typecheck":"tsc --noEmit","test:engine":"node --experimental-strip-types --test tests/engine.test.ts"},"dependencies":{"@capacitor/android":"7.6.9","@capacitor/core":"7.6.9","@capacitor/local-notifications":"7.0.7","react":"19.1.1","react-dom":"19.1.1"},"devDependencies":{"@capacitor/cli":"7.6.9","@types/react":"19.1.10","@types/react-dom":"19.1.7","typescript":"5.9.2","vite":"8.3.2"}}
+{
+  "name": "lifeos-master",
+  "version": "2.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build.mjs",
+    "verify": "npm run typecheck && npm run build && node scripts/verify-release.mjs",
+    "preview": "vite preview",
+    "android:prepare": "npm run build && npx cap sync android",
+    "android:debug": "npm run verify && npx cap sync android && cd android && ./gradlew assembleDebug",
+    "typecheck": "tsc --noEmit",
+    "test:engine": "node --experimental-strip-types --test tests/engine.test.ts"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.9",
+    "@capacitor/core": "7.6.9",
+    "@capacitor/local-notifications": "7.0.7",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.9",
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.7",
+    "typescript": "5.9.2",
+    "vite": "8.3.2"
+  }
+}
