@@ -30,6 +30,9 @@ jobs:
       - name: Engine behavioral tests
         run: timeout 60s npm run test:engine
 
+      - name: Database and persistence tests
+        run: timeout 60s npm run test:db
+
       - name: Build production bundle
         run: timeout 120s npm run build
 
