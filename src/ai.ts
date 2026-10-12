@@ -1,7 +1,7 @@
 import type{AppState}from"./models";import{recommendation,allTasks}from"./engine";
 
 const ENV=(import.meta as ImportMeta & {env?:Record<string,string>}).env||{};
-const ENDPOINT=ENV.VITE_LIFEOS_AI_ENDPOINT||"";
+const ENDPOINT=ENV.VITE_LIFEOS_AI_ENDPOINT||"https://ejwburasdjzuxnkwwbju.supabase.co/functions/v1/lifeos-ai";
 
 export function aiConfigured(){return Boolean(ENDPOINT)}
 export async function askLifeGuide(state:AppState,question:string,accessToken:string){
